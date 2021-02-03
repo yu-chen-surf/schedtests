@@ -2,10 +2,8 @@
 #####################
 #hackbench config
 #####################
-hackbench_job_list="3 6 9 12"
-hackbench_iterations=10
-hackbench_sleep_time=10
-hackbench_log_path=$test_path/logs/hackbench
+: "${hackbench_job_list:="3 6 9 12"}"
+: "${hackbench_iterations:=10}"
 
 #####################
 #hackbench parameters
@@ -15,6 +13,8 @@ hackbench_ipc_mode="pipe sockets"
 hackbench_work_loops=10000
 hackbench_data_size=100
 hackbench_pattern_cmd="grep Time"
+hackbench_sleep_time=10
+hackbench_log_path=$test_path/logs/hackbench
 
 run_hackbench_pre()
 {

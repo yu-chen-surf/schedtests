@@ -2,18 +2,18 @@
 #####################
 #schbench config
 #####################
-schbench_job_list="3 6 9 12"
-schbench_iterations=10
-schbench_sleep_time=10
-schbench_log_path=$test_path/logs/schbench
+: "${schbench_job_list:="48 96 144 192"}"
+: "${schbench_iterations:=10}"
+: "${schbench_run_time:=100}"
 
 #####################
 #schbench parameters
 #####################
-schbench_run_time=100
 schbench_work_mode="normal"
 schbench_worker_threads=16
 schbench_pattern_cmd="grep 99.0000"
+schbench_sleep_time=10
+schbench_log_path=$test_path/logs/schbench
 
 run_schbench_pre()
 {

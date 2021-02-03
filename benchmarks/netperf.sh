@@ -2,18 +2,18 @@
 #####################
 #netperf config
 #####################
-netperf_job_list="48 96 144 192"
-netperf_iterations=10
-netperf_sleep_time=10
-netperf_log_path=$test_path/logs/netperf
+: "${netperf_job_list:="48 96 144 192"}"
+: "${netperf_iterations:=10}"
+: "${netperf_run_time:=100}"
 
 #####################
 #netperf parameters
 #####################
 netperf_work_mode="TCP_RR UDP_RR"
 netperf_host_ip=127.0.0.1
-netperf_run_time=100
+netperf_sleep_time=10
 pattern_cmd="grep $netperf_run_time.00"
+netperf_log_path=$test_path/logs/netperf
 
 run_netperf_pre()
 {
