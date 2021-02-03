@@ -29,7 +29,7 @@ run_schbench_post()
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
 			log_file=$schbench_log_path/$wm/mthread-$job/$kernel_name/schbench.log
-			cat $log_file | $schbench_pattern_cmd > \
+			cat $log_file | $schbench_pattern_cmd | awk '{print $2}' > \
 				$schbench_log_path/$wm/mthread-$job/$kernel_name.log
 		done
 	done

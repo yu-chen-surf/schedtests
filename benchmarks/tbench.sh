@@ -34,7 +34,7 @@ run_tbench_post()
 	for job in $tbench_job_list; do
 		for wm in $tbench_work_mode; do
 			log_file=$tbench_log_path/$wm/thread-$job/$kernel_name/tbench.log
-			cat $log_file | $tbench_pattern_cmd > \
+			cat $log_file | $tbench_pattern_cmd | awk '{print $2}' > \
 				$tbench_log_path/$wm/thread-$job/$kernel_name.log
 		done
 	done

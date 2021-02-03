@@ -34,7 +34,7 @@ run_hackbench_post()
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
 				log_file=$hackbench_log_path/$wt-$im/group-$job/$kernel_name/hackbench.log
-				cat $log_file | $hackbench_pattern_cmd > \
+				cat $log_file | $hackbench_pattern_cmd | awk '{print $2}' > \
 					$hackbench_log_path/$wt-$im/group-$job/$kernel_name.log
 			done
 		done

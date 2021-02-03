@@ -12,7 +12,7 @@
 netperf_work_mode="TCP_RR UDP_RR"
 netperf_host_ip=127.0.0.1
 netperf_sleep_time=10
-pattern_cmd="grep $netperf_run_time.00"
+netperf_pattern_cmd="grep $netperf_run_time.00"
 netperf_log_path=$test_path/logs/netperf
 
 run_netperf_pre()
@@ -34,7 +34,7 @@ run_netperf_post()
 	for job in $netperf_job_list; do
 		for wm in $netperf_work_mode; do
 			log_file=$netperf_log_path/$wm/thread-$job/$kernel_name/netperf.log
-			cat $log_file | $pattern_cmd > \
+			cat $log_file | $netperf_pattern_cmd | awk '{print $6}' > \
 				$netperf_log_path/$wm/thread-$job/$kernel_name.log
 		done
 	done

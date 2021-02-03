@@ -4,18 +4,13 @@ import sys
 import numpy as np
 import pandas as pd
 
-benchmark_list = [
-	{'name':"hackbench",	'indicator_pos':1},
-	{'name':"netperf",	'indicator_pos':5},
-	{'name':"tbench",	'indicator_pos':1},
-	{'name':"schbench",	'indicator_pos':1}]
+benchmark_list = ["hackbench", "netperf", "tbench", "schbench"]
 
 class benchmark:
 	curr_path = os.getcwd()
 
-	def __init__(self, name, indicator_pos):
+	def __init__(self, name):
 		self.log_path = os.path.join(benchmark.curr_path, "logs/" + name)
-		self.pos = indicator_pos
 		self.table = pd.DataFrame(columns = ['case', 'load', 'baseline-avg', 'baseline-std', 'patch-avg', 'patch-std'])
 
 	def parse_logfile(self, logfile):
@@ -23,7 +18,7 @@ class benchmark:
 		fd = open(logfile, 'r')
 		for line in fd.readlines():
 			items = line.strip().split()
-			indicator.append(float(items[self.pos]))
+			indicator.append(float(items[0]))
 		fd.close()
 		return indicator
 
@@ -65,8 +60,7 @@ if __name__ == "__main__":
 	baseline = sys.argv[1]
 	patch = sys.argv[2]
 	for i in range(len(benchmark_list)):
-		name = benchmark_list[i]['name']
-		pos = benchmark_list[i]['indicator_pos']
-		task = benchmark(name, pos)
-		print("===={0}====".format(name))
+		name = benchmark_list[i]
+		task = benchmark(name)
+		print(name)
 		task.report(baseline, patch)
