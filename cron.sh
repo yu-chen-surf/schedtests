@@ -8,7 +8,7 @@ cd /home/aubrey/work/schedtests
 touch state_machine
 
 for task in $task_list; do
-	if [ `grep -c $task complete_list` -eq '0' ]; then
+	if [ `grep -c $task state_machine` -eq '0' ]; then
 		echo `date` | mutt -s "[schedtests]: $task started" $email_address
 		./run-schedtests.sh $task > cron.log 2>&1
 		echo `date` | mutt -s "[schedtests]: $task completed" $email_address
