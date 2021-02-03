@@ -1,7 +1,6 @@
 #!/bin/bash
 test_path=`pwd`
 kernel_name=`uname -r`
-email_address="aubrey.li@intel.com"
 
 iterations=2
 runtime=10
