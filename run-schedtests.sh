@@ -1,6 +1,6 @@
 #!/bin/bash
 test_path=`pwd`
-kernel_name="5.10.9-upstream"
+kernel_name=`uname -r`
 email_address="aubrey.li@intel.com"
 
 run_hackbench()
