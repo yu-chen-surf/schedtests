@@ -20,7 +20,11 @@ run_netperf_pre()
 	echo "start netperf server"
 	pgrep netserver && killall netserver
 	sleep 1
-	netserver
+	netserver &> /dev/null
+	if [ $? -ne 0 ]; then
+		echo "[schedtests]: netperf server not found or version not compatible"
+		exit 1
+	fi
 	sleep 1
 	for job in $netperf_job_list; do
 		for wm in $netperf_work_mode; do
