@@ -18,6 +18,14 @@ hackbench_log_path=$test_path/logs/hackbench
 
 run_hackbench_pre()
 {
+	hackbench -g 1 --process --pipe -l 1 -s 1 &> /dev/null
+	if [ $? -ne 0 ]; then
+		echo "[schedtests]: hackbench not found or version not compatible"
+		echo "Usage: hackbench [-p|--pipe] [-s|--datasize <bytes>] [-l|--loops <num loops>]"
+		echo "                 [-g|--groups <num groups] [-f|--fds <num fds>]"
+		echo "                 [-T|--threads] [-P|--process] [--help]"
+		exit 1
+	fi
 	for job in $hackbench_job_list; do
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
@@ -25,7 +33,6 @@ run_hackbench_pre()
 			done
 		done
 	done
-
 }
 
 run_hackbench_post()
