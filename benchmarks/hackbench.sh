@@ -73,12 +73,13 @@ run_hackbench()
 	for job in $hackbench_job_list; do
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
-				run_hackbench_iterations $job $wt $im
 				echo "Wait 10 seconds for the next case"
 				sleep $hackbench_sleep_time
+				run_hackbench_iterations $job $wt $im
 			done
 		done
 	done
+	echo -e "\nhackbench testing completed"
 }
 
 run_hackbench_pre

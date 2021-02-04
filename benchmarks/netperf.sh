@@ -66,11 +66,12 @@ run_netperf()
 {
 	for job in $netperf_job_list; do
 		for wm in $netperf_work_mode; do
-			run_netperf_iterations $job $wm
 			echo "Wait 10 seconds for the next case"
 			sleep $netperf_sleep_time
+			run_netperf_iterations $job $wm
 		done
 	done
+	echo -e "\nnetperf testing completed"
 }
 
 run_netperf_pre

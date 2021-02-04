@@ -58,11 +58,12 @@ run_schbench()
 {
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
-			run_schbench_iterations $job $wm
 			echo "Wait 10 seconds for the next case"
 			sleep $schbench_sleep_time
+			run_schbench_iterations $job $wm
 		done
 	done
+	echo -e "\nschbench testing completed"
 }
 
 run_schbench_pre

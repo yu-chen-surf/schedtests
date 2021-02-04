@@ -63,11 +63,12 @@ run_tbench()
 {
 	for job in $tbench_job_list; do
 		for wm in $tbench_work_mode; do
-			run_tbench_iterations $job $wm
 			echo -e "\nWait 10 seconds for the next case"
 			sleep $tbench_sleep_time
+			run_tbench_iterations $job $wm
 		done
 	done
+	echo -e "\ntbench testing completed"
 }
 
 run_tbench_pre
