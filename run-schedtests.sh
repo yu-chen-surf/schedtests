@@ -36,9 +36,12 @@ run_schbench()
 	. $test_path/benchmarks/schbench.sh
 }
 
-run_complete()
-{
-	echo `date` | mutt -s "[schedtests]: Testing completed" $email_address
+[ $# = 0 ] && {
+        run_hackbench
+        run_netperf
+        run_tbench
+        run_schbench
+        exit
 }
 
 benchmark=$1
@@ -48,5 +51,4 @@ case "$benchmark" in
 	'netperf'	) run_netperf	;;
 	'tbench'	) run_tbench	;;
 	'schbench'	) run_schbench	;;
-	'complete'	) run_complete	;;
 esac
