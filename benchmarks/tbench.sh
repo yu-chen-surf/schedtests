@@ -20,7 +20,11 @@ run_tbench_pre()
 	echo "start tbench server"
 	pgrep tbench_srv && killall tbench_srv
 	sleep 1
-	tbench_srv &
+	tbench_srv &> /dev/null &
+	if [ $? -ne 0 ]; then
+		echo "[schedtests]: tbench server not found or version not compatible"
+		exit 1
+	fi
 	sleep 1
 	for job in $tbench_job_list; do
 		for wm in $tbench_work_mode; do
