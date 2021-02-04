@@ -17,6 +17,20 @@ schbench_log_path=$test_path/logs/schbench
 
 run_schbench_pre()
 {
+	schbench -m 1 -t 1 -r 1 -s -c &> /dev/null
+	if [ $? -ne 0 ]; then
+		echo "[schedtests]: schbench not found or version not compatible"
+		echo "schbench usage:"
+		echo "        -m (--message-threads): number of message threads (def: 2)"
+		echo "        -t (--threads): worker threads per message thread (def: 16)"
+		echo "        -r (--runtime): How long to run before exiting (seconds, def: 30)"
+		echo "        -s (--sleeptime): Message thread latency (usec, def: 10000)"
+		echo "        -c (--cputime): How long to think during loop (usec, def: 10000)"
+		echo "        -a (--auto): grow thread count until latencies hurt (def: off)"
+		echo "        -p (--pipe): transfer size bytes to simulate a pipe test (def: 0)"
+		echo "        -R (--rps): requests per second mode (count, def: 0)"
+		exit 1
+	fi
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
 			mkdir -p $schbench_log_path/$wm/mthread-$job/$kernel_name
