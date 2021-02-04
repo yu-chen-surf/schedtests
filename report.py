@@ -52,8 +52,10 @@ class benchmark:
 								'baseline-std':baseline_std,
 								'patch-avg':patch_avg,
 								'patch-std':patch_std},
-                                    				ignore_index=True)
-		#self.table.sort_values(by=['case', 'patch-avg'], ascending=True, inplace=True)
+                                                                ignore_index=True)
+		self.table['sort'] = self.table['load'].str.extract('(\d+)', expand=False).astype(int)
+		self.table.sort_values(by=['case', 'sort'], inplace=True, ascending=True)
+		self.table = self.table.drop('sort', axis=1).reset_index(drop=True)
 
 	def report(self, baseline, patch, better):
 		self.data_process(baseline, patch)
