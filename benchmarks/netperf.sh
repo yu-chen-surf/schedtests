@@ -18,7 +18,7 @@ netperf_log_path=$test_path/logs/netperf
 run_netperf_pre()
 {
 	echo "start netperf server"
-	killall netserver
+	pgrep netserver && killall netserver
 	sleep 1
 	netserver
 	sleep 1

@@ -18,7 +18,7 @@ tbench_log_path=$test_path/logs/tbench
 run_tbench_pre()
 {
 	echo "start tbench server"
-	killall tbench_srv
+	pgrep tbench_srv && killall tbench_srv
 	sleep 1
 	tbench_srv &
 	sleep 1
