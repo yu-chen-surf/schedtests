@@ -4,7 +4,12 @@ import sys
 import numpy as np
 import pandas as pd
 
-benchmark_list = ["hackbench", "netperf", "tbench", "schbench"]
+benchmark_list = [
+		{"name":"hackbench",	"better":"less"},
+		{"name":"netperf",	"better":"bigger"},
+		{"name":"tbench",	"better":"bigger"},
+		{"name":"schbench",	"better":"less"},
+		]
 
 class benchmark:
 	curr_path = os.getcwd()
@@ -48,10 +53,22 @@ class benchmark:
 								'patch-avg':patch_avg,
 								'patch-std':patch_std},
                                     				ignore_index=True)
-	def report(self, baseline, patch):
+		#self.table.sort_values(by=['case', 'patch-avg'], ascending=True, inplace=True)
+
+	def report(self, baseline, patch, better):
 		self.data_process(baseline, patch)
-		print(self.table)
-			
+		print('{0:16s}\t{1:8s}\t{2}({3})\t{4} ({5:>6s})'.format('case','load','baseline','std%','patch%','std%'))
+		for i in range(len(self.table)):
+			if better == 'less':
+				change = round((1 - self.table['patch-avg'][i]/self.table['baseline-avg'][i]) * 100.0, 2)
+			else:
+				change = round((self.table['patch-avg'][i]/self.table['baseline-avg'][i] - 1) * 100.0, 2)
+			print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f} ({5:6.2f})'.format(self.table['case'][i],
+								    self.table['load'][i],
+								    1.0,
+								    self.table['baseline-std'][i],
+								    change,
+								    self.table['patch-std'][i]))
 
 if __name__ == "__main__":
 	if len(sys.argv) < 3:
@@ -60,7 +77,8 @@ if __name__ == "__main__":
 	baseline = sys.argv[1]
 	patch = sys.argv[2]
 	for i in range(len(benchmark_list)):
-		name = benchmark_list[i]
+		name = benchmark_list[i]['name']
+		better = benchmark_list[i]['better']
 		task = benchmark(name)
-		print(name)
-		task.report(baseline, patch)
+		print("\n{0}\n".format(name))
+		task.report(baseline, patch, better)
