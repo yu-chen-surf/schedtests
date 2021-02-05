@@ -38,3 +38,13 @@ utilization and can be adjusted individually for benchmarks.
 For example:
 - hackbench_job_list="2 3 4" #number of send/recv groups
 - schbench_jost_list="2 4 8" #number of message threads
+
+## Invocation
+
+Suggest to run the script as root to avoid unexpected issues.
+
+Run all benchmarks in one time:
+- #./run-schedtests.sh
+
+Run one benchmark in one time:
+- #./run-schedtests.sh hackbench
