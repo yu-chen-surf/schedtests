@@ -4,20 +4,20 @@ test_path=`cd "$rela_path" && pwd`
 kernel_name=`uname -r`
 
 # 50% 100% 200%
-job_list="$(($(nproc) / 2)) $(nproc) $(($(nproc) * 2))"
+joblist="$(($(nproc) / 2)) $(nproc) $(($(nproc) * 2))"
 runtime=10
 iterations=2
 
 run_hackbench()
 {
-	hackbench_job_list=$job_list
+	hackbench_job_list=$joblist
 	hackbench_iterations=$iterations
 	. $test_path/benchmarks/hackbench.sh
 }
 
 run_netperf()
 {
-	netperf_job_list=$job_list
+	netperf_job_list=$joblist
 	netperf_run_time=$runtime
 	netperf_iterations=$iterations
 	. $test_path/benchmarks/netperf.sh
@@ -25,7 +25,7 @@ run_netperf()
 
 run_tbench()
 {
-	tbench_job_list=$job_list
+	tbench_job_list=$joblist
 	tbench_run_time=$runtime
 	tbench_iterations=$iterations
 	. $test_path/benchmarks/tbench.sh
@@ -33,7 +33,7 @@ run_tbench()
 
 run_schbench()
 {
-	schbench_job_list=$job_list
+	schbench_job_list=$joblist
 	schbench_run_time=$runtime
 	schbench_iterations=$iterations
 	. $test_path/benchmarks/schbench.sh

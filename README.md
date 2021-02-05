@@ -26,3 +26,15 @@ Note, schbench is expected to be installed at /usr/bin.
 mutt and msmtp is expected to be properly configured.
 
 ## Configuration
+
+There are 3 global variables to configure:
+- joblist: load levels of a benchmark case
+- runtime: how long to run a benchmark case before exiting
+- iterations: how many times to run a benchmark case
+
+The job list is specified by [50% 100% 200%] number of CPUs in the
+system by default, This list is not accurately mapped to the system
+utilization and can be adjusted individually for benchmarks.
+For example, change benchmark job list as below:
+-hackbench_job_list="2 3 4"
+-schbench_jost_list="2 4 8"
