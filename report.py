@@ -16,7 +16,7 @@ class benchmark:
 
 	def __init__(self, name):
 		self.log_path = os.path.join(benchmark.curr_path, "logs/" + name)
-		self.table = pd.DataFrame(columns = ['case', 'load', 'baseline-avg', 'baseline-std', 'patch-avg', 'patch-std'])
+		self.table = pd.DataFrame(columns = ['case', 'load', 'baseline-avg', 'baseline-std', 'compare-avg', 'compare-std'])
 
 	def parse_logfile(self, logfile):
 		indicator = []
@@ -27,7 +27,7 @@ class benchmark:
 		fd.close()
 		return indicator
 
-	def data_process(self, baseline, patch):
+	def data_process(self, baseline, compare):
 		for case in os.listdir(self.log_path):
 			case_path = os.path.join(self.log_path,case)
 			for load in os.listdir(case_path):
@@ -43,44 +43,45 @@ class benchmark:
 					if baseline in log:
 						baseline_avg = avg
 						baseline_std = std
-					if patch in log:
-						patch_avg = avg
-						patch_std = std
+					if compare in log:
+						compare_avg = avg
+						compare_std = std
 				self.table = self.table.append({'case':case,
 								'load':load,
 								'baseline-avg':baseline_avg,
 								'baseline-std':baseline_std,
-								'patch-avg':patch_avg,
-								'patch-std':patch_std},
+								'compare-avg':compare_avg,
+								'compare-std':compare_std},
                                                                 ignore_index=True)
 		self.table['sort'] = self.table['load'].str.extract('(\d+)', expand=False).astype(int)
 		self.table.sort_values(by=['case', 'sort'], inplace=True, ascending=True)
 		self.table = self.table.drop('sort', axis=1).reset_index(drop=True)
 
-	def report(self, baseline, patch, better):
-		self.data_process(baseline, patch)
-		print('{0:16s}\t{1:8s}\t{2}({3})\t{4} ({5:>6s})'.format('case','load','baseline','std%','patch%','std%'))
+	def report(self, baseline, compare, better):
+		self.data_process(baseline, compare)
+		print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})'.format('case','load','baseline','std%','compare%','std%'))
 		for i in range(len(self.table)):
 			if better == 'less':
-				change = round((1 - self.table['patch-avg'][i]/self.table['baseline-avg'][i]) * 100.0, 2)
+				change = round((1 - self.table['compare-avg'][i]/self.table['baseline-avg'][i]) * 100.0, 2)
 			else:
-				change = round((self.table['patch-avg'][i]/self.table['baseline-avg'][i] - 1) * 100.0, 2)
+				change = round((self.table['compare-avg'][i]/self.table['baseline-avg'][i] - 1) * 100.0, 2)
 			print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f} ({5:6.2f})'.format(self.table['case'][i],
 								    self.table['load'][i],
 								    1.0,
 								    self.table['baseline-std'][i],
 								    change,
-								    self.table['patch-std'][i]))
+								    self.table['compare-std'][i]))
 
 if __name__ == "__main__":
 	if len(sys.argv) < 3:
-		print("log file argument missing")
+		print("usage: ./report.py [baseline] [compare]")
 		sys.exit()
 	baseline = sys.argv[1]
-	patch = sys.argv[2]
+	compare = sys.argv[2]
 	for i in range(len(benchmark_list)):
 		name = benchmark_list[i]['name']
 		better = benchmark_list[i]['better']
 		task = benchmark(name)
-		print("\n{0}\n".format(name))
-		task.report(baseline, patch, better)
+		print("\n{0}".format(name))
+		print("==========")
+		task.report(baseline, compare, better)
