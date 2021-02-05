@@ -1,5 +1,6 @@
 #!/bin/bash
-test_path=`pwd`
+rela_path=`dirname $0`
+test_path=`cd "$rela_path" && pwd`
 kernel_name=`uname -r`
 
 iterations=2
