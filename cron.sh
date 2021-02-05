@@ -1,4 +1,6 @@
 #!/bin/sh
+rela_path=`dirname $0`
+test_path=`cd "$rela_path" && pwd`
 task_list="hackbench netperf tbench schbench"
 email_address="aubrey.li@intel.com"
 
@@ -15,7 +17,7 @@ task_notify()
 #wait for the system boots up completely
 sleep 30
 
-cd /home/aubrey/work/schedtests
+cd $test_path
 touch state_machine
 
 for task in $task_list; do
