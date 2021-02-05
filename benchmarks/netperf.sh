@@ -2,7 +2,7 @@
 #####################
 #netperf config
 #####################
-: "${netperf_job_list:="48 96 144 192"}"
+: "${netperf_job_list:="1 2 4"}"
 : "${netperf_iterations:=10}"
 : "${netperf_run_time:=100}"
 
@@ -70,7 +70,7 @@ run_netperf()
 {
 	for job in $netperf_job_list; do
 		for wm in $netperf_work_mode; do
-			echo "Wait 10 seconds for the next case"
+			echo "netperf: wait 10 seconds for the next case"
 			sleep $netperf_sleep_time
 			run_netperf_iterations $job $wm
 		done

@@ -2,7 +2,7 @@
 #####################
 #tbench config
 #####################
-: "${tbench_job_list:="48 96 144 192"}"
+: "${tbench_job_list:="1 2 4"}"
 : "${tbench_iterations:=10}"
 : "${tbench_run_time:=100}"
 
@@ -67,7 +67,7 @@ run_tbench()
 {
 	for job in $tbench_job_list; do
 		for wm in $tbench_work_mode; do
-			echo -e "\nWait 10 seconds for the next case"
+			echo -e "\ntbench: wait 10 seconds for the next case"
 			sleep $tbench_sleep_time
 			run_tbench_iterations $job $wm
 		done

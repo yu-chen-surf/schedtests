@@ -2,7 +2,7 @@
 #####################
 #hackbench config
 #####################
-: "${hackbench_job_list:="3 6 9 12"}"
+: "${hackbench_job_list:="1 2 4"}"
 : "${hackbench_iterations:=10}"
 
 #####################
@@ -80,7 +80,7 @@ run_hackbench()
 	for job in $hackbench_job_list; do
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
-				echo "Wait 10 seconds for the next case"
+				echo "hackbench: wait 10 seconds for the next case"
 				sleep $hackbench_sleep_time
 				run_hackbench_iterations $job $wt $im
 			done

@@ -3,37 +3,39 @@ rela_path=`dirname $0`
 test_path=`cd "$rela_path" && pwd`
 kernel_name=`uname -r`
 
-iterations=2
+# 50% 100% 200%
+job_list="$(($(nproc) / 2)) $(nproc) $(($(nproc) * 2))"
 runtime=10
+iterations=2
 
 run_hackbench()
 {
-	hackbench_job_list="6 12"
+	hackbench_job_list=$job_list
 	hackbench_iterations=$iterations
 	. $test_path/benchmarks/hackbench.sh
 }
 
 run_netperf()
 {
-	netperf_job_list="52 104"
-	netperf_iterations=$iterations
+	netperf_job_list=$job_list
 	netperf_run_time=$runtime
+	netperf_iterations=$iterations
 	. $test_path/benchmarks/netperf.sh
 }
 
 run_tbench()
 {
-	tbench_job_list="52 104"
-	tbench_iterations=$iterations
+	tbench_job_list=$job_list
 	tbench_run_time=$runtime
+	tbench_iterations=$iterations
 	. $test_path/benchmarks/tbench.sh
 }
 
 run_schbench()
 {
-	schbench_job_list="4 8"
-	schbench_iterations=$iterations
+	schbench_job_list=$job_list
 	schbench_run_time=$runtime
+	schbench_iterations=$iterations
 	. $test_path/benchmarks/schbench.sh
 }
 

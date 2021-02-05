@@ -2,7 +2,7 @@
 #####################
 #schbench config
 #####################
-: "${schbench_job_list:="3 6 9 12"}"
+: "${schbench_job_list:="1 2 4"}"
 : "${schbench_iterations:=10}"
 : "${schbench_run_time:=100}"
 
@@ -72,7 +72,7 @@ run_schbench()
 {
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
-			echo "Wait 10 seconds for the next case"
+			echo "schbench: wait 10 seconds for the next case"
 			sleep $schbench_sleep_time
 			run_schbench_iterations $job $wm
 		done
