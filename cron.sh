@@ -15,7 +15,8 @@ task_notify()
 	fi
 
 	if [ $status = "started" ]; then
-		echo `date` `uname -r` `hostname` | mutt -s "[schedtests]: $task $status" $email_address
+		echo "Time:" $(date '+%F %T') "\nKernel:" `uname -r` "\nMachine:" `hostname` | \
+			mutt -s "[schedtests]: $task $status" $email_address
 	elif [ $task = "Testing" ]; then
 		./report.py --baseline $run_name | mutt -s "[schedtests]: $task $status" $email_address
 	else
