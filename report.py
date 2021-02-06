@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 
 benchmark_list = [
-		{"name":"hackbench",	"better":"less"},
-		{"name":"netperf",	"better":"bigger"},
-		{"name":"tbench",	"better":"bigger"},
-		{"name":"schbench",	"better":"less"},
+		{"name":"hackbench",	"metrics":"Time",	"better":"less"},
+		{"name":"netperf",	"metrics":"Trans/s",	"better":"bigger"},
+		{"name":"tbench",	"metrics":"Tput/s",	"better":"bigger"},
+		{"name":"schbench",	"metrics":"Lat_99th",	"better":"less"},
 		]
 
 class benchmark:
@@ -62,10 +62,10 @@ class benchmark:
 		self.table.sort_values(by=['case', 'sort'], inplace=True, ascending=True)
 		self.table = self.table.drop('sort', axis=1).reset_index(drop=True)
 
-	def report(self, baseline, compare, better):
+	def report(self, baseline, compare, metrics, better):
 		self.data_process(baseline, compare)
 		if not compare:
-			print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}'.format('case','load','baseline','std%'))
+			print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}'.format('case','load',metrics,'std%'))
 		else:
 			print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})'.format('case','load','baseline','std%','compare%','std%'))
 		for i in range(len(self.table)):
@@ -121,8 +121,9 @@ if __name__ == "__main__":
 		name = benchmark_list[i]['name']
 		if testname and testname not in name:
 			continue
+		metrics = benchmark_list[i]['metrics']
 		better = benchmark_list[i]['better']
 		task = benchmark(name)
 		print("\n{0}".format(name))
 		print("==========")
-		task.report(baseline, compare, better)
+		task.report(baseline, compare, metrics, better)
