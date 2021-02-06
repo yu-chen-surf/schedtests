@@ -12,6 +12,7 @@ hackbench_work_type="process threads"
 hackbench_ipc_mode="pipe sockets"
 hackbench_work_loops=10000
 hackbench_data_size=100
+hackbench_num_fds=40
 hackbench_pattern_cmd="grep Time"
 hackbench_sleep_time=10
 hackbench_log_path=$test_path/logs/hackbench
@@ -26,6 +27,13 @@ run_hackbench_pre()
 		echo "                 [-T|--threads] [-P|--process] [--help]"
 		exit 1
 	fi
+
+	# ${A##* } - remove longest leading, keep only the last word)
+	last_job=${hackbench_job_list##* }
+	tasks=$((last_job * $hackbench_num_fds))
+	# increase open file number
+	ulimit -n $((tasks + $(nproc)))
+
 	for job in $hackbench_job_list; do
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
@@ -54,9 +62,9 @@ run_hackbench_single()
 	local wt=$2
 	local im=$3	
 	if [ $im == "pipe" ]; then
-		hackbench -g $job --$wt --$im -l $hackbench_work_loops -s $hackbench_data_size
+		hackbench -g $job --$wt --$im -l $hackbench_work_loops -s $hackbench_data_size -f $hackbench_num_fds
 	elif [ $im == "sockets" ]; then
-		hackbench -g $job --$wt -l $hackbench_work_loops -s $hackbench_data_size
+		hackbench -g $job --$wt -l $hackbench_work_loops -s $hackbench_data_size -f $hackbench_num_fds
 	else
 		echo "hackbench: wrong IPC mode!"
 	fi
