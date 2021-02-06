@@ -1,8 +1,8 @@
 # schedtests
 
 A lightweight benchmarking framework primarily aimed at Linux kernel scheduler
-testing. It provides a reasonable coverage within one night, to compare the
-difference between a baseline kernel and a testing kernel.
+testing. It provides a reasonable coverage within one night time, to compare
+the difference between a baseline kernel and a testing kernel.
 
 ## Basic Installation
 
@@ -39,12 +39,30 @@ For example:
 - hackbench_job_list="2 3 4" #number of send/recv groups
 - schbench_jost_list="2 4 8" #number of message threads
 
+Ususally, runtime >= 100seconds andn iterations >= 10 is the compliant
+setting for the valid result.
+
 ## Invocation
 
-Suggest to run the script as root to avoid unexpected issues.
+It is recommended to run the script as root to avoid unexpected issues.
 
 Run all benchmarks in one time:
 - #./run-schedtests.sh
 
 Run one benchmark in one time:
 - #./run-schedtests.sh hackbench
+
+The global variable $run_name is assigned to the kernel release
+string by default.
+
+## Automation
+
+To eliminate the interaction between different benchmarks, it is recommended
+to restart the system between two benchmarks.
+
+Place cron.sh into crontab -e as follows:
+
+	@reboot /home/aubrey/work/schedtests/cron.sh
+
+It will run at boot time and automatically run all benchmarks, system restart
+between the two tasks is through kexec.
