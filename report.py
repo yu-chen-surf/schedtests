@@ -48,7 +48,7 @@ class benchmark:
 					if baseline in log:
 						baseline_avg = avg
 						baseline_std = std
-					if compare in log:
+					if compare and compare in log:
 						compare_avg = avg
 						compare_std = std
 				self.table = self.table.append({'case':case,
