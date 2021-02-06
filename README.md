@@ -65,7 +65,7 @@ Place cron.sh into crontab -e as follows:
 	@reboot /home/aubrey/work/schedtests/cron.sh
 
 It will run at boot time and automatically run all benchmarks, system restart
-between the two tasks is done by kexec.
+between the two benchmarks is done by kexec.
 
 Optionally, if the variable $email_address is set, cron.sh will send out the
 automation progress notification.
