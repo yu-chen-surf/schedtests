@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import os
 import sys
+import getopt
 import numpy as np
 import pandas as pd
 
@@ -71,15 +72,42 @@ class benchmark:
 								    self.table['baseline-std'][i],
 								    change,
 								    self.table['compare-std'][i]))
+def usage():
+	print("./report.py usage:")
+	print("\t-t (--test) test case name")
+	print("\t-b (--baseline) baseline run name")
+	print("\t-c (--compare) compare run name")
 
 if __name__ == "__main__":
-	if len(sys.argv) < 3:
-		print("usage: ./report.py [baseline] [compare]")
+
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:', ['help','testname','baseline','compare'])
+	except getopt.GetoptError:
+		usage()
 		sys.exit()
-	baseline = sys.argv[1]
-	compare = sys.argv[2]
+
+	testname = ""
+	baseline = ""
+	compare = ""
+	for opt_name, opt_value in opts:
+		if opt_name in ('-h', '--help'):
+			usage()
+			sys.exit()
+		if opt_name in ('-t', '--testname'):
+			testname = opt_value
+		if opt_name in ('-b', '--baseline'):
+			baseline = opt_value
+		if opt_name in ('-c', '--compare'):
+			compare = opt_value
+
+	if not baseline or not compare:
+		usage()
+		sys.exit()
+
 	for i in range(len(benchmark_list)):
 		name = benchmark_list[i]['name']
+		if testname and testname not in name:
+			continue
 		better = benchmark_list[i]['better']
 		task = benchmark(name)
 		print("\n{0}".format(name))
