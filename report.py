@@ -34,6 +34,10 @@ class benchmark:
 			for load in os.listdir(case_path):
 				load_path = os.path.join(case_path, load)
 				log_column = []
+				baseline_avg = 0.0
+				baseline_std = 0.0
+				compare_avg = 0.0
+				compare_std = 0.0
 				for log in os.listdir(load_path):
 					result = os.path.join(load_path, log)
 					if os.path.isdir(result):
@@ -60,13 +64,21 @@ class benchmark:
 
 	def report(self, baseline, compare, better):
 		self.data_process(baseline, compare)
-		print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})'.format('case','load','baseline','std%','compare%','std%'))
+		if not compare:
+			print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}'.format('case','load','baseline','std%'))
+		else:
+			print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})'.format('case','load','baseline','std%','compare%','std%'))
 		for i in range(len(self.table)):
-			if better == 'less':
-				change = round((1 - self.table['compare-avg'][i]/self.table['baseline-avg'][i]) * 100.0, 2)
+			if not compare:
+				print('{0:16s}\t{1:8s}\t{2:12.2f}\t({3:6.2f})'.format(
+					self.table['case'][i], self.table['load'][i],
+					self.table['baseline-avg'][i], self.table['baseline-std'][i]))
 			else:
-				change = round((self.table['compare-avg'][i]/self.table['baseline-avg'][i] - 1) * 100.0, 2)
-			print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f} ({5:6.2f})'.format(self.table['case'][i],
+				if better == 'less':
+					change = round((1 - self.table['compare-avg'][i]/self.table['baseline-avg'][i]) * 100.0, 2)
+				else:
+					change = round((self.table['compare-avg'][i]/self.table['baseline-avg'][i] - 1) * 100.0, 2)
+				print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f} ({5:6.2f})'.format(self.table['case'][i],
 								    self.table['load'][i],
 								    1.0,
 								    self.table['baseline-std'][i],
@@ -81,7 +93,7 @@ def usage():
 if __name__ == "__main__":
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:', ['help','testname','baseline','compare'])
+		opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:', ['help','testname=','baseline=','compare='])
 	except getopt.GetoptError:
 		usage()
 		sys.exit()
@@ -100,7 +112,8 @@ if __name__ == "__main__":
 		if opt_name in ('-c', '--compare'):
 			compare = opt_value
 
-	if not baseline or not compare:
+	# baseline is a must
+	if not baseline:
 		usage()
 		sys.exit()
 
