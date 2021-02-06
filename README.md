@@ -60,12 +60,12 @@ string by default.
 To eliminate the interaction between different benchmarks, it is recommended
 to restart the system between two benchmarks.
 
-Place cron.sh into crontab -e as follows:
+Place cron.sh into "crontab -e" as follows:
 
 	@reboot /home/aubrey/work/schedtests/cron.sh
 
 It will run at boot time and automatically run all benchmarks, system restart
-between the two benchmarks is done by kexec.
+between the two benchmarks is done by kexec by default.
 
 Optionally, if the variable $email_address is set, cron.sh will send out the
 automation progress notification.

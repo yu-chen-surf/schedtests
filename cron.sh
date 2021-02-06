@@ -3,6 +3,7 @@ rela_path=`dirname $0`
 test_path=`cd "$rela_path" && pwd`
 task_list="hackbench netperf tbench schbench"
 email_address="aubrey.li@intel.com"
+reboot_cmd="systemctl start kexec.target"
 
 task_notify()
 {
@@ -28,7 +29,7 @@ for task in $task_list; do
 		echo "$task" >> state_machine
 		# wait for the notification sent out
 		sleep 10
-		systemctl start kexec.target
+		$reboot_cmd
 		exit
 	fi
 done
