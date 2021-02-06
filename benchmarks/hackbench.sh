@@ -29,7 +29,7 @@ run_hackbench_pre()
 	for job in $hackbench_job_list; do
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
-				mkdir -p $hackbench_log_path/$wt-$im/group-$job/$kernel_name
+				mkdir -p $hackbench_log_path/$wt-$im/group-$job/$run_name
 			done
 		done
 	done
@@ -40,9 +40,9 @@ run_hackbench_post()
 	for job in $hackbench_job_list; do
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
-				log_file=$hackbench_log_path/$wt-$im/group-$job/$kernel_name/hackbench.log
+				log_file=$hackbench_log_path/$wt-$im/group-$job/$run_name/hackbench.log
 				cat $log_file | $hackbench_pattern_cmd | awk '{print $2}' > \
-					$hackbench_log_path/$wt-$im/group-$job/$kernel_name.log
+					$hackbench_log_path/$wt-$im/group-$job/$run_name.log
 			done
 		done
 	done
@@ -70,7 +70,7 @@ run_hackbench_iterations()
 
 	for i in $(seq 1 $hackbench_iterations); do
 		echo "Group:" $job " - Type:" $wt " - Mode:" $im " - Iterations:" $i
-		run_hackbench_single $job $wt $im >> $hackbench_log_path/$wt-$im/group-$job/$kernel_name/hackbench.log
+		run_hackbench_single $job $wt $im >> $hackbench_log_path/$wt-$im/group-$job/$run_name/hackbench.log
 		sleep 1
 	done
 }

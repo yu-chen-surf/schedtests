@@ -28,7 +28,7 @@ run_tbench_pre()
 	sleep 1
 	for job in $tbench_job_list; do
 		for wm in $tbench_work_mode; do
-			mkdir -p $tbench_log_path/$wm/thread-$job/$kernel_name
+			mkdir -p $tbench_log_path/$wm/thread-$job/$run_name
 		done
 	done
 }
@@ -37,9 +37,9 @@ run_tbench_post()
 {
 	for job in $tbench_job_list; do
 		for wm in $tbench_work_mode; do
-			log_file=$tbench_log_path/$wm/thread-$job/$kernel_name/tbench.log
+			log_file=$tbench_log_path/$wm/thread-$job/$run_name/tbench.log
 			cat $log_file | $tbench_pattern_cmd | awk '{print $2}' > \
-				$tbench_log_path/$wm/thread-$job/$kernel_name.log
+				$tbench_log_path/$wm/thread-$job/$run_name.log
 		done
 	done
 }
@@ -58,7 +58,7 @@ run_tbench_iterations()
 
 	for i in $(seq 1 $tbench_iterations); do
 		echo -e "\nThread:" $job " - Mode:" $wm " - Iterations:" $i
-		run_tbench_single $job >> $tbench_log_path/$wm/thread-$job/$kernel_name/tbench.log
+		run_tbench_single $job >> $tbench_log_path/$wm/thread-$job/$run_name/tbench.log
 		sleep 1
 	done
 }

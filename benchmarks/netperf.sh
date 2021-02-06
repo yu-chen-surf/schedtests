@@ -28,7 +28,7 @@ run_netperf_pre()
 	sleep 1
 	for job in $netperf_job_list; do
 		for wm in $netperf_work_mode; do
-			mkdir -p $netperf_log_path/$wm/thread-$job/$kernel_name
+			mkdir -p $netperf_log_path/$wm/thread-$job/$run_name
 		done
 	done
 }
@@ -37,9 +37,9 @@ run_netperf_post()
 {
 	for job in $netperf_job_list; do
 		for wm in $netperf_work_mode; do
-			log_file=$netperf_log_path/$wm/thread-$job/$kernel_name/netperf.log
+			log_file=$netperf_log_path/$wm/thread-$job/$run_name/netperf.log
 			cat $log_file | $netperf_pattern_cmd | awk '{print $6}' > \
-				$netperf_log_path/$wm/thread-$job/$kernel_name.log
+				$netperf_log_path/$wm/thread-$job/$run_name.log
 		done
 	done
 }
@@ -61,7 +61,7 @@ run_netperf_iterations()
 
 	for i in $(seq 1 $netperf_iterations); do
 		echo "Thread:" $job " - Mode:" $wm " - Iterations:" $i
-		run_netperf_single $job $wm >> $netperf_log_path/$wm/thread-$job/$kernel_name/netperf.log
+		run_netperf_single $job $wm >> $netperf_log_path/$wm/thread-$job/$run_name/netperf.log
 		sleep 1
 	done
 }

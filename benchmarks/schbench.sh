@@ -33,7 +33,7 @@ run_schbench_pre()
 	fi
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
-			mkdir -p $schbench_log_path/$wm/mthread-$job/$kernel_name
+			mkdir -p $schbench_log_path/$wm/mthread-$job/$run_name
 		done
 	done
 }
@@ -42,9 +42,9 @@ run_schbench_post()
 {
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
-			log_file=$schbench_log_path/$wm/mthread-$job/$kernel_name/schbench.log
+			log_file=$schbench_log_path/$wm/mthread-$job/$run_name/schbench.log
 			cat $log_file | $schbench_pattern_cmd | awk '{print $2}' > \
-				$schbench_log_path/$wm/mthread-$job/$kernel_name.log
+				$schbench_log_path/$wm/mthread-$job/$run_name.log
 		done
 	done
 }
@@ -63,7 +63,7 @@ run_schbench_iterations()
 
 	for i in $(seq 1 $schbench_iterations); do
 		echo "mThread:" $job " - Mode:" $wm " - Iterations:" $i
-		run_schbench_single $job &>> $schbench_log_path/$wm/mthread-$job/$kernel_name/schbench.log
+		run_schbench_single $job &>> $schbench_log_path/$wm/mthread-$job/$run_name/schbench.log
 		sleep 1
 	done
 }
