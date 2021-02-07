@@ -17,18 +17,19 @@ class benchmark:
 
 	def __init__(self, name):
 		self.log_path = os.path.join(benchmark.curr_path, "logs/" + name)
+		self.metrics_pos = 0
 		self.table = pd.DataFrame(columns = ['case', 'load', 'baseline-avg', 'baseline-std', 'compare-avg', 'compare-std'])
 
-	def parse_logfile(self, logfile):
+	def _parse_logfile(self, logfile):
 		indicator = []
 		fd = open(logfile, 'r')
 		for line in fd.readlines():
 			items = line.strip().split()
-			indicator.append(float(items[0]))
+			indicator.append(float(items[self.metrics_pos]))
 		fd.close()
 		return indicator
 
-	def data_process(self, baseline, compare):
+	def _data_process(self, baseline, compare):
 		for case in os.listdir(self.log_path):
 			case_path = os.path.join(self.log_path,case)
 			for load in os.listdir(case_path):
@@ -42,7 +43,7 @@ class benchmark:
 					result = os.path.join(load_path, log)
 					if os.path.isdir(result):
 						continue
-					indicator = self.parse_logfile(result)
+					indicator = self._parse_logfile(result)
 					avg = round(np.mean(indicator), 4)
 					std = round(100 * np.std(indicator) / avg, 2)
 					if baseline in log:
@@ -62,28 +63,30 @@ class benchmark:
 		self.table.sort_values(by=['case', 'sort'], inplace=True, ascending=True)
 		self.table = self.table.drop('sort', axis=1).reset_index(drop=True)
 
-	def report(self, baseline, compare, metrics, better):
-		self.data_process(baseline, compare)
-		if not compare:
-			print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}'.format('case','load',metrics,'std%'))
-		else:
-			print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})'.format('case','load','baseline','std%','compare%','std%'))
+	def _baseline_report(self, baseline, metrics):
+		print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}'.format('case','load',metrics,'std%'))
 		for i in range(len(self.table)):
-			if not compare:
-				print('{0:16s}\t{1:8s}\t{2:12.2f}\t({3:6.2f})'.format(
-					self.table['case'][i], self.table['load'][i],
-					self.table['baseline-avg'][i], self.table['baseline-std'][i]))
+			print('{0:16s}\t{1:8s}\t{2:12.2f}\t({3:6.2f})'.format(
+				self.table['case'][i], self.table['load'][i],
+				self.table['baseline-avg'][i], self.table['baseline-std'][i]))
+
+	def _compare_report(self, baseline, compare, better):
+		print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})'.format('case','load','baseline','std%','compare%','std%'))
+		for i in range(len(self.table)):
+			if better == 'less':
+				change = round((1 - self.table['compare-avg'][i]/self.table['baseline-avg'][i]) * 100.0, 2)
 			else:
-				if better == 'less':
-					change = round((1 - self.table['compare-avg'][i]/self.table['baseline-avg'][i]) * 100.0, 2)
-				else:
-					change = round((self.table['compare-avg'][i]/self.table['baseline-avg'][i] - 1) * 100.0, 2)
-				print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f} ({5:6.2f})'.format(self.table['case'][i],
-								    self.table['load'][i],
-								    1.0,
-								    self.table['baseline-std'][i],
-								    change,
-								    self.table['compare-std'][i]))
+				change = round((self.table['compare-avg'][i]/self.table['baseline-avg'][i] - 1) * 100.0, 2)
+			print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f} ({5:6.2f})'.format(self.table['case'][i],
+					self.table['load'][i], 1.0, self.table['baseline-std'][i],
+					change, self.table['compare-std'][i]))
+
+	def report(self, baseline, compare, metrics, better):
+		self._data_process(baseline, compare)
+		if not compare:
+			self._baseline_report(baseline, metrics)
+		else:
+			self._compare_report(baseline, compare, better)
 def usage():
 	print("./report.py [-t testname] -b baseline [-c compare]")
 	print("\t-t (--testname) test case name")
