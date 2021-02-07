@@ -85,7 +85,7 @@ class benchmark:
 								    change,
 								    self.table['compare-std'][i]))
 def usage():
-	print("./report.py usage:")
+	print("./report.py [-t testname] -b baseline [-c compare]")
 	print("\t-t (--testname) test case name")
 	print("\t-b (--baseline) baseline run name")
 	print("\t-c (--compare) compare run name")
