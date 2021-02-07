@@ -26,9 +26,9 @@ class benchmark:
 
         # benchmark core table
         self.table = pd.DataFrame(columns =
-                    ['case', 'load', 'b_avg', 'b_std', 'c_avg', 'c_std'])
+                        ['case', 'load', 'b_avg', 'b_std', 'c_avg', 'c_std'])
 
-    def _parse_logfile(self, logfile):
+    def _log_parse(self, logfile):
 
         metrics = []
 
@@ -39,64 +39,109 @@ class benchmark:
             metrics.append(float(items[self.metrics_pos]))
 
         fd.close()
-	# return metrics list
-        return metrics
 
-    def _data_process(self, baseline, compare):
+        avg = round(np.mean(metrics), 4)
+        std = round(100 * np.std(metrics) / avg, 2)
+
+        return avg, std
+
+    def _log_process(self, baseline, compare):
+        # The log topology is 4-level structure
+        # ./logs
+        #    |---benchmark                (netperf)
+        #        |---case                 (TCP_RR)
+        #            |---load             (thread_96)
+        #                |---baseline.log (5.10.13-stable.log)
+        #                |---compare.log  (5.10.13-icmv8.log)
+
         for case in os.listdir(self.log_path):
             case_path = os.path.join(self.log_path,case)
             for load in os.listdir(case_path):
                 load_path = os.path.join(case_path, load)
-                baseline_avg = 0.0
-                baseline_std = 0.0
-                compare_avg = 0.0
-                compare_std = 0.0
+
+                b_avg = 0.0
+                b_std = 0.0
+                c_avg = 0.0
+                c_std = 0.0
+
                 for log in os.listdir(load_path):
-                    result = os.path.join(load_path, log)
-                    if os.path.isdir(result):
+                    log_file = os.path.join(load_path, log)
+                    # now in the log file directory, ignore baseline
+                    # or compare folder
+                    if os.path.isdir(log_file):
                         continue
-                    indicator = self._parse_logfile(result)
-                    avg = round(np.mean(indicator), 4)
-                    std = round(100 * np.std(indicator) / avg, 2)
+                    avg, std = self._log_parse(log_file)
+
                     if baseline in log:
-                        baseline_avg = avg
-                        baseline_std = std
+                          b_avg = avg
+                          b_std = std
+
                     if compare and compare in log:
-                        compare_avg = avg
-                        compare_std = std
-                self.table = self.table.append({'case':case,
-                                        'load':load,
-                                        'b_avg':baseline_avg,
-                                        'b_std':baseline_std,
-                                        'c_avg':compare_avg,
-                                        'c_std':compare_std},
-                                        ignore_index=True)
-        self.table['sort'] = self.table['load'].str.extract('(\d+)',
-                                        expand=False).astype(int)
-        self.table.sort_values(by=['case', 'sort'], inplace=True, ascending=True)
-        self.table = self.table.drop('sort', axis=1).reset_index(drop=True)
+                          c_avg = avg
+                          c_std = std
+
+                #sanity check
+                if b_avg == 0:
+                    print("{} log does not exist".format(baseline))
+                    sys.exit(1)
+
+                if compare and c_avg == 0:
+                    print("{} log does not exist".format(compare))
+                    sys.exit(1)
+
+                self.table = self.table.append({
+                                'case':case, 'load':load,
+                                'b_avg':b_avg, 'b_std':b_std,
+                                'c_avg':c_avg, 'c_std':c_std},
+                                ignore_index=True)
+
+        # sort the table by case column first, then load column
+        #
+        # netperf
+        # ===========
+        # case            	load    	     Trans/s	    std%
+        # TCP_RR          	thread-96	    74601.39	(  5.14)
+        # TCP_RR          	thread-192	    14550.99	(  6.48)
+        # TCP_RR          	thread-384	    45175.21	( 15.35)
+        # UDP_RR          	thread-96	    74784.91	(  8.99)
+        # UDP_RR          	thread-192	    15524.48	( 26.66)
+        # UDP_RR          	thread-384	    23963.53	( 27.27)
+        self.table['sort'] = self.table['load'].str.extract(
+                                '(\d+)', expand = False).astype(int)
+        self.table.sort_values(by=['case', 'sort'],
+                                inplace = True, ascending= True)
+        self.table = self.table.drop('sort', axis = 1).reset_index(drop = True)
 
     def _baseline_report(self, baseline, metrics):
-        print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}'.format(
-                                        'case','load',metrics,'std%'))
+        # print table header
+        print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}' \
+            .format('case','load',metrics,'std%'))
+        # print table body
         for i in range(len(self.table)):
-            print('{0:16s}\t{1:8s}\t{2:12.2f}\t({3:6.2f})'.format(
-                self.table['case'][i], self.table['load'][i],
-                self.table['baseline-avg'][i], self.table['baseline-std'][i]))
+            print('{0:16s}\t{1:8s}\t{2:12.2f}\t({3:6.2f})' \
+                .format(self.table['case'][i], self.table['load'][i],
+                self.table['b_avg'][i], self.table['b_std'][i]))
 
     def _compare_report(self, baseline, compare, better):
-        print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})'.format('case','load','baseline','std%','compare%','std%'))
+        #print table header
+        print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})' \
+            .format('case','load','baseline','std%','compare%','std%'))
+
+        #print table body
         for i in range(len(self.table)):
+            change = self.table['c_avg'][i]/self.table['b_avg'][i]
             if better == '-':
-                change = round((1 - self.table['c_avg'][i]/self.table['b_avg'][i]) * 100.0, 2)
+                change_pct = round((1 - change) * 100.0, 2)
             else:
-                change = round((self.table['c_avg'][i]/self.table['b_avg'][i] - 1) * 100.0, 2)
-            print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f} ({5:6.2f})'.format(self.table['case'][i],
+                change_pct = round((change - 1) * 100.0, 2)
+
+            print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f}' \
+                    ' ({5:6.2f})'.format(self.table['case'][i],
                     self.table['load'][i], 1.0, self.table['b_std'][i],
                     change, self.table['c_std'][i]))
 
     def report(self, baseline, compare, metrics, better):
-        self._data_process(baseline, compare)
+        self._log_process(baseline, compare)
         if not compare:
             self._baseline_report(baseline, metrics)
         else:
@@ -110,10 +155,12 @@ def usage():
 if __name__ == "__main__":
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:', ['help','testname=','baseline=','compare='])
+        opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:',
+                        ['help','testname=','baseline=','compare='])
     except getopt.GetoptError:
         usage()
-        sys.exit()
+        # 128 - invalid argument to exit
+        sys.exit(128)
 
     testname = ""
     baseline = ""
@@ -132,7 +179,8 @@ if __name__ == "__main__":
     # baseline is a must
     if not baseline:
         usage()
-        sys.exit()
+        # catchall for general errors
+        sys.exit(1)
 
     for i in range(len(bmk_list)):
         name = bmk_list[i]['name']
