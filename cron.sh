@@ -1,6 +1,7 @@
 #!/bin/sh
 rela_path=`dirname $0`
 test_path=`cd "$rela_path" && pwd`
+run_name=`uname -r`
 task_list="hackbench netperf tbench schbench"
 email_address="aubrey.li@intel.com"
 reboot_cmd="systemctl start kexec.target"
@@ -12,7 +13,15 @@ task_notify()
 	if [ -z "$email_address" ]; then
 		return
 	fi
-	echo `date` `uname -r` `hostname` | mutt -s "[schedtests]: $task $status" $email_address
+
+	if [ $status = "started" ]; then
+		echo `date` `uname -r` `hostname` | mutt -s "[schedtests]: $task $status" $email_address
+	elif [ $task = "Testing" ]; then
+		./report.py --baseline $run_name | mutt -s "[schedtests]: $task $status" $email_address
+	else
+		./report.py --testname $task --baseline $run_name | \
+			mutt -s "[schedtests]: $task $status" $email_address
+	fi
 }
 
 #wait for the system boots up completely
