@@ -16,13 +16,16 @@ bmk_list = [
 class benchmark:
     curr_path = os.getcwd()
 
-    def __init__(self, name):
+    def __init__(self, bmk):
 
         # the relative log path is ./logs
-        self.log_path = os.path.join(benchmark.curr_path, "logs/" + name)
+        self.log_path = os.path.join(benchmark.curr_path, "logs/" + bmk['name'])
 
-        # metrics extracted as the first column in the log file
+        # metrics extracted as the first column in the log file by bash script
         self.metrics_pos = 0
+
+        self.metrics_str = bmk['metrics']
+        self.better = bmk['better']
 
         # benchmark core table
         self.table = pd.DataFrame(columns =
@@ -112,10 +115,10 @@ class benchmark:
                                 inplace = True, ascending= True)
         self.table = self.table.drop('sort', axis = 1).reset_index(drop = True)
 
-    def _baseline_report(self, baseline, metrics):
+    def _baseline_report(self, baseline):
         # print table header
         print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}' \
-            .format('case','load',metrics,'std%'))
+            .format('case','load',self.metrics_str,'std%'))
 
         # print table body
         for i in range(len(self.table)):
@@ -123,7 +126,7 @@ class benchmark:
                 .format(self.table['case'][i], self.table['load'][i],
                 self.table['b_avg'][i], self.table['b_std'][i]))
 
-    def _compare_report(self, baseline, compare, better):
+    def _compare_report(self, baseline, compare):
         #print table header
         print('{0:16s}\t{1:8s}\t{2}({3})\t{4}({5:>5s})' \
             .format('case','load','baseline','std%','compare%','std%'))
@@ -131,7 +134,7 @@ class benchmark:
         #print table body
         for i in range(len(self.table)):
             change = self.table['c_avg'][i]/self.table['b_avg'][i]
-            if better == '-':
+            if self.better == '-':
                 change_pct = round((1 - change) * 100.0, 2)
             else:
                 change_pct = round((change - 1) * 100.0, 2)
@@ -141,13 +144,18 @@ class benchmark:
                     self.table['load'][i], 1.0, self.table['b_std'][i],
                     change, self.table['c_std'][i]))
 
-    def report(self, baseline, compare, metrics, better):
+    def report(self, bmk, baseline, compare):
+	#output benchmark name
+        print("\n{}".format(bmk['name']))
+        print("{}".format("=" * len(bmk['name'])))
+
         self._log_process(baseline, compare)
 
         if not compare:
-            self._baseline_report(baseline, metrics)
+            self._baseline_report(baseline)
         else:
-            self._compare_report(baseline, compare, better)
+            self._compare_report(baseline, compare)
+
 def usage():
     print("./report.py [-t testname] -b baseline [-c compare]")
     print("\t-t (--testname) test case name")
@@ -167,6 +175,7 @@ if __name__ == "__main__":
     testname = ""
     baseline = ""
     compare = ""
+
     for opt_name, opt_value in opts:
         if opt_name in ('-h', '--help'):
             usage()
@@ -185,12 +194,10 @@ if __name__ == "__main__":
         sys.exit(1)
 
     for i in range(len(bmk_list)):
-        name = bmk_list[i]['name']
-        if testname and testname not in name:
+        bmk = bmk_list[i]
+
+        if testname and testname not in bmk['name']:
             continue
-        metrics = bmk_list[i]['metrics']
-        better = bmk_list[i]['better']
-        task = benchmark(name)
-        print("\n{0}".format(name))
-        print("==========")
-        task.report(baseline, compare, metrics, better)
+
+        task = benchmark(bmk)
+        task.report(bmk, baseline, compare)
