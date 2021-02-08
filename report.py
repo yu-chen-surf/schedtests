@@ -116,6 +116,7 @@ class benchmark:
         # print table header
         print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}' \
             .format('case','load',metrics,'std%'))
+
         # print table body
         for i in range(len(self.table)):
             print('{0:16s}\t{1:8s}\t{2:12.2f}\t({3:6.2f})' \
@@ -142,6 +143,7 @@ class benchmark:
 
     def report(self, baseline, compare, metrics, better):
         self._log_process(baseline, compare)
+
         if not compare:
             self._baseline_report(baseline, metrics)
         else:
