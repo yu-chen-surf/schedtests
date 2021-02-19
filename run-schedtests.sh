@@ -49,6 +49,10 @@ run_schbench()
 
 benchmark=$1
 
+if [ -n "$2" ]; then
+	joblist=$2
+fi
+
 case "$benchmark" in
 	'hackbench'	) run_hackbench	;;
 	'netperf'	) run_netperf	;;
