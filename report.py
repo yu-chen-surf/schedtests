@@ -142,7 +142,7 @@ class benchmark:
             print('{0:16s}\t{1:8s}\t{2:5.2f} ({3:6.2f})\t{4:>+6.2f}' \
                     ' ({5:6.2f})'.format(self.table['case'][i],
                     self.table['load'][i], 1.0, self.table['b_std'][i],
-                    change, self.table['c_std'][i]))
+                    change_pct, self.table['c_std'][i]))
 
     def report(self, bmk, baseline, compare):
 	#output benchmark name
