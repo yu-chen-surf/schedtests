@@ -2,7 +2,7 @@
 #####################
 #schbench config
 #####################
-: "${schbench_job_list:="1 2 4"}"
+: "${schbench_job_list:="1 2 4 8"}"
 : "${schbench_iterations:=10}"
 : "${schbench_run_time:=100}"
 

@@ -2,7 +2,7 @@
 #####################
 #hackbench config
 #####################
-: "${hackbench_job_list:="1 2 4"}"
+: "${hackbench_job_list:="1 2 4 8"}"
 : "${hackbench_iterations:=10}"
 
 #####################

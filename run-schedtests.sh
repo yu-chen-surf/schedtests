@@ -3,8 +3,8 @@ rela_path=`dirname $0`
 test_path=`cd "$rela_path" && pwd`
 
 run_name=`uname -r`
-# 50% 100% 200%
-joblist="$(($(nproc) / 2)) $(nproc) $(($(nproc) * 2))"
+# 25% 50% 100% 200%
+joblist="$(($(nproc) / 4)) $(($(nproc) / 2)) $(nproc) $(($(nproc) * 2))"
 runtime=10
 iterations=2
 

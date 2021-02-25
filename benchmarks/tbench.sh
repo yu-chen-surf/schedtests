@@ -2,7 +2,7 @@
 #####################
 #tbench config
 #####################
-: "${tbench_job_list:="1 2 4"}"
+: "${tbench_job_list:="1 2 4 8"}"
 : "${tbench_iterations:=10}"
 : "${tbench_run_time:=100}"
 

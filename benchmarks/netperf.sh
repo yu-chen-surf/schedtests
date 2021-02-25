@@ -2,7 +2,7 @@
 #####################
 #netperf config
 #####################
-: "${netperf_job_list:="1 2 4"}"
+: "${netperf_job_list:="1 2 4 8"}"
 : "${netperf_iterations:=10}"
 : "${netperf_run_time:=100}"
 
