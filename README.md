@@ -39,7 +39,7 @@ For example:
 - hackbench_job_list="2 3 4" #number of send/recv groups
 - schbench_jost_list="2 4 8" #number of message threads
 
-Ususally, runtime >= 100 seconds and iterations >= 10 is the compliant
+Ususally, runtime >= 100 seconds and iterations >= 5 is the compliant
 setting for the valid result.
 
 ## Invocation

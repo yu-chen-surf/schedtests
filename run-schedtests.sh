@@ -5,8 +5,8 @@ test_path=`cd "$rela_path" && pwd`
 run_name=`uname -r`
 # 25% 50% 100% 200%
 joblist="$(($(nproc) / 4)) $(($(nproc) / 2)) $(nproc) $(($(nproc) * 2))"
-runtime=10
-iterations=2
+runtime=60
+iterations=3
 
 run_hackbench()
 {
