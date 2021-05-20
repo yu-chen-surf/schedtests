@@ -10,7 +10,7 @@ iterations=3
 
 run_hackbench()
 {
-	hackbench_job_list=$joblist
+	hackbench_job_list="1 2 4 8"
 	hackbench_iterations=$iterations
 	. $test_path/benchmarks/hackbench.sh
 }
@@ -33,7 +33,7 @@ run_tbench()
 
 run_schbench()
 {
-	schbench_job_list=$joblist
+	schbench_job_list="1 2 4 8"
 	schbench_run_time=$runtime
 	schbench_iterations=$iterations
 	. $test_path/benchmarks/schbench.sh

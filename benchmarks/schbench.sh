@@ -10,7 +10,7 @@
 #schbench parameters
 #####################
 schbench_work_mode="normal"
-schbench_worker_threads=16
+schbench_worker_threads=$(($(nproc) / 4))
 schbench_pattern_cmd="grep 99.0000"
 schbench_sleep_time=10
 schbench_log_path=$test_path/logs/schbench
