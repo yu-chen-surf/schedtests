@@ -11,7 +11,8 @@
 #####################
 schbench_work_mode="normal"
 schbench_worker_threads=$(($(nproc) / 4))
-schbench_pattern_cmd="grep 99.0000"
+schbench_old_pattern="99.0000th"
+schbench_pattern="99.0th"
 schbench_sleep_time=10
 schbench_log_path=$test_path/logs/schbench
 
@@ -43,7 +44,10 @@ run_schbench_post()
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
 			log_file=$schbench_log_path/$wm/mthread-$job/$run_name/schbench.log
-			cat $log_file | $schbench_pattern_cmd | awk '{print $2}' > \
+			if grep -q $schbench_old_pattern $log_file; then
+				schbench_pattern=$schbench_old_pattern
+			fi
+			cat $log_file | grep $schbench_pattern | awk '{print $2}' > \
 				$schbench_log_path/$wm/mthread-$job/$run_name.log
 		done
 	done
