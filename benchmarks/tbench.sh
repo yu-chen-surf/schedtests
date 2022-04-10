@@ -58,7 +58,9 @@ run_tbench_iterations()
 
 	for i in $(seq 1 $tbench_iterations); do
 		echo -e "\nThread:" $job " - Mode:" $wm " - Iterations:" $i
+		cat /proc/schedstat | grep cpu >> $tbench_log_path/$wm/thread-$job/$run_name-schedstat_before.log
 		run_tbench_single $job >> $tbench_log_path/$wm/thread-$job/$run_name/tbench.log
+		cat /proc/schedstat | grep cpu >> $tbench_log_path/$wm/thread-$job/$run_name-schedstat_after.log
 		sleep 1
 	done
 }

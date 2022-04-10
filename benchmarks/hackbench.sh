@@ -79,7 +79,9 @@ run_hackbench_iterations()
 
 	for i in $(seq 1 $hackbench_iterations); do
 		echo "Group:" $job " - Type:" $wt " - Mode:" $im " - Iterations:" $i
+		cat /proc/schedstat | grep cpu >> $hackbench_log_path/$wt-$im/group-$job/$run_name-schedstat_before.log
 		run_hackbench_single $job $wt $im >> $hackbench_log_path/$wt-$im/group-$job/$run_name/hackbench.log
+		cat /proc/schedstat | grep cpu >> $hackbench_log_path/$wt-$im/group-$job/$run_name-schedstat_after.log
 		sleep 1
 	done
 }

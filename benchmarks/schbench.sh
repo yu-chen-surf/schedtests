@@ -67,7 +67,9 @@ run_schbench_iterations()
 
 	for i in $(seq 1 $schbench_iterations); do
 		echo "mThread:" $job " - Mode:" $wm " - Iterations:" $i
+		cat /proc/schedstat | grep cpu >> $schbench_log_path/$wm/mthread-$job/$run_name-schedstat_before.log
 		run_schbench_single $job &>> $schbench_log_path/$wm/mthread-$job/$run_name/schbench.log
+		cat /proc/schedstat | grep cpu >> $schbench_log_path/$wm/mthread-$job/$run_name-schedstat_after.log
 		sleep 1
 	done
 }

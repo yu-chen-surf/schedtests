@@ -31,6 +31,39 @@ class benchmark:
         self.table = pd.DataFrame(columns =
                         ['case', 'load', 'b_avg', 'b_std', 'c_avg', 'c_std'])
 
+        # /proc/schedstat, at most 20 fields
+        self.schedstat_array = np.zeros((20,1))
+
+    def _schedstat_parse(self, logfile):
+
+        fd = open(logfile, 'r')
+        stat = np.zeros((20,1))
+
+        i = 0
+        iter = 0
+        for line in fd.readlines():
+            items = line.strip().split()
+            i = 0
+            for field in items:
+                # the first field is cpuX
+                if i == 0:
+                    # check how many times cpu0 appears
+                    if field == "cpu0":
+                        iter += 1
+                else:
+                    stat[i-1] += int(field)
+                i += 1
+
+        i = 0
+        # stat[i] is the sum of ith field from all CPUs
+        while i < 20:
+            stat[i] /= iter
+            i += 1
+
+        fd.close()
+
+        return stat
+
     def _log_parse(self, logfile):
 
         metrics = []
@@ -56,6 +89,8 @@ class benchmark:
         #            |---load             (thread_96)
         #                |---baseline.log (5.10.13-stable.log)
         #                |---compare.log  (5.10.13-icmv8.log)
+        #                |---schedstat_before.log
+        #                |---schedstat_after.log
 
         for case in os.listdir(self.log_path):
             case_path = os.path.join(self.log_path,case)
@@ -73,15 +108,33 @@ class benchmark:
                     # or compare folder
                     if os.path.isdir(log_file):
                         continue
-                    avg, std = self._log_parse(log_file)
+
+                    if "schedstat" not in log_file:
+                        avg, std = self._log_parse(log_file)
 
                     if baseline in log:
+                          if "schedstat_before" in log_file:
+                             stat_b = self._schedstat_parse(log_file)
+                             continue
+                          if "schedstat_after" in log_file:
+                             stat_a = self._schedstat_parse(log_file)
+                             continue
+
                           b_avg = avg
                           b_std = std
 
                     if compare and compare in log:
+                          if "schedstat" in log_file:
+                             #TBD
+                             continue
+
                           c_avg = avg
                           c_std = std
+
+                i = 0
+                while i < 20:
+                    self.schedstat_array[i] = stat_a[i] - stat_b[i]
+                    i += 1
 
                 #sanity check
                 if b_avg == 0:
@@ -92,11 +145,14 @@ class benchmark:
                     print("{} log does not exist".format(compare))
                     sys.exit(1)
 
-                self.table = self.table.append({
-                                'case':case, 'load':load,
-                                'b_avg':b_avg, 'b_std':b_std,
-                                'c_avg':c_avg, 'c_std':c_std},
-                                ignore_index=True)
+                base_dict = { 'case':case, 'load':load, 'b_avg':b_avg, 'b_std':b_std, 'c_avg':c_avg, 'c_std':c_std}
+                for field in schedstat_field:
+                    # in case someone says -s 0
+                    if field == 0:
+                        field = 1
+                    base_dict['s'+field] = int(self.schedstat_array[int(field) - 1])
+
+                self.table = self.table.append(base_dict, ignore_index=True)
 
         # sort the table by case column first, then load column
         #
@@ -117,14 +173,28 @@ class benchmark:
 
     def _baseline_report(self, baseline):
         # print table header
-        print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}' \
-            .format('case','load',self.metrics_str,'std%'))
+        print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}\t\t' \
+            .format('case','load',self.metrics_str,'std%'), end='')
+
+        for field in schedstat_field:
+            # in case someone says -s 0
+            if field == '0':
+                field = '1'
+            s_name = 's' + field
+            print('{0:12s}\t'.format(s_name), end='')
+        print()
 
         # print table body
         for i in range(len(self.table)):
-            print('{0:16s}\t{1:8s}\t{2:12.2f}\t({3:6.2f})' \
+            print('{0:16s}\t{1:8s}\t{2:12.2f}\t({3:6.2f})\t' \
                 .format(self.table['case'][i], self.table['load'][i],
-                self.table['b_avg'][i], self.table['b_std'][i]))
+                self.table['b_avg'][i], self.table['b_std'][i]), end='')
+            for field in schedstat_field:
+                 # in case someone says -s 0
+                 if field == 0:
+                     field = 1
+                 print("%10.0f\t" % self.table['s'+field][i], end='')
+            print()
 
     def _compare_report(self, baseline, compare):
         #print table header
@@ -157,16 +227,17 @@ class benchmark:
             self._compare_report(baseline, compare)
 
 def usage():
-    print("./report.py [-t testname] -b baseline [-c compare]")
+    print("./report.py [-t testname] -b baseline [-c compare] -s schedstat")
     print("\t-t (--testname) test case name")
     print("\t-b (--baseline) baseline run name")
     print("\t-c (--compare) compare run name")
+    print("\t-s (--schedstat) schedstat field")
 
 if __name__ == "__main__":
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:',
-                        ['help','testname=','baseline=','compare='])
+        opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:-s:',
+                        ['help','testname=','baseline=','compare=','schedstat='])
     except getopt.GetoptError:
         usage()
         # 128 - invalid argument to exit
@@ -175,6 +246,7 @@ if __name__ == "__main__":
     testname = ""
     baseline = ""
     compare = ""
+    schedstat_field = ""
 
     for opt_name, opt_value in opts:
         if opt_name in ('-h', '--help'):
@@ -186,6 +258,8 @@ if __name__ == "__main__":
             baseline = opt_value
         if opt_name in ('-c', '--compare'):
             compare = opt_value
+        if opt_name in ('-s', '--schedstat'):
+            schedstat_field = opt_value.split(',')
 
     # baseline is a must
     if not baseline:
