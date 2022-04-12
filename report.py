@@ -4,6 +4,7 @@ import sys
 import getopt
 import numpy as np
 import pandas as pd
+import re
 
 #global benchmark_list
 bmk_list = [
@@ -64,6 +65,28 @@ class benchmark:
 
         return stat
 
+    def _util_avg_parse(self, logfile):
+
+        fd = open(logfile, 'r')
+
+        util_avg = 0
+        iter = 0
+
+        for line in fd.readlines():
+            m = re.search('sum_util', line)
+            if  not m:
+                continue
+
+            items = line.strip().split("=")
+            util_avg += int(items[2])
+            iter += 1
+
+        util_avg /= iter
+
+        fd.close()
+
+        return util_avg
+
     def _log_parse(self, logfile):
 
         metrics = []
@@ -101,6 +124,7 @@ class benchmark:
                 b_std = 0.0
                 c_avg = 0.0
                 c_std = 0.0
+                util_avg = 0.0
 
                 for log in os.listdir(load_path):
                     log_file = os.path.join(load_path, log)
@@ -110,7 +134,8 @@ class benchmark:
                         continue
 
                     if "schedstat" not in log_file:
-                        avg, std = self._log_parse(log_file)
+                          if "ftrace" not in log_file:
+                             avg, std = self._log_parse(log_file)
 
                     if baseline in log:
                           if "schedstat_before" in log_file:
@@ -119,12 +144,18 @@ class benchmark:
                           if "schedstat_after" in log_file:
                              stat_a = self._schedstat_parse(log_file)
                              continue
+                          if "ftrace" in log_file:
+                             util_avg = self._util_avg_parse(log_file)
+                             continue
 
                           b_avg = avg
                           b_std = std
 
                     if compare and compare in log:
                           if "schedstat" in log_file:
+                             #TBD
+                             continue
+                          if "util_avg" in log_file:
                              #TBD
                              continue
 
@@ -145,7 +176,7 @@ class benchmark:
                     print("{} log does not exist".format(compare))
                     sys.exit(1)
 
-                base_dict = { 'case':case, 'load':load, 'b_avg':b_avg, 'b_std':b_std, 'c_avg':c_avg, 'c_std':c_std}
+                base_dict = { 'case':case, 'load':load, 'b_avg':b_avg, 'b_std':b_std, 'c_avg':c_avg, 'c_std':c_std, 'util_avg':util_avg}
                 for field in schedstat_field:
                     # in case someone says -s 0
                     if field == 0:
@@ -182,6 +213,8 @@ class benchmark:
                 field = '1'
             s_name = 's' + field
             print('{0:12s}\t'.format(s_name), end='')
+
+        print('{0:12s}\t'.format('util_avg'), end='')
         print()
 
         # print table body
@@ -194,6 +227,8 @@ class benchmark:
                  if field == 0:
                      field = 1
                  print("%10.0f\t" % self.table['s'+field][i], end='')
+
+            print("%16.0f\t" % self.table['util_avg'][i], end='')
             print()
 
     def _compare_report(self, baseline, compare):

@@ -9,6 +9,13 @@ joblist="$min_job $(($min_job * 2)) $(($min_job * 3)) $(($min_job * 4)) $(($min_
 runtime=60
 iterations=3
 
+pepc.standalone pstates config --governor performance
+pepc.standalone pstates config --turbo off
+pepc.standalone cstates config --disable C6
+echo 1 > /proc/sys/kernel/sched_schedstats
+echo 1 > /sys/kernel/debug/tracing/events/sched/sched_update_sd_lb_stats/enable
+pepc.standalone cpu-hotplug offline --packages 1
+
 run_hackbench()
 {
 	hackbench_job_list="1 2 4 8"

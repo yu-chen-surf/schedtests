@@ -21,8 +21,9 @@
 #s10:rq->sis_search,s11:rq->sis_domain_search,s12:rq->sis_scanned, s13:rq->sis_failed
 
 #For example, after running the schedtests, we can get the schedstats via
-#./report -t hackbench -b 5.16.0-rc3-stat+ -s 10,11,12,13 > hackbench_result.log
+#./report -t netperf -b 5.16.0-rc3-stat+ -s 10,11,12,13 > netperf_result.log
 #then calculate the metrics using this script:
+#schedstat_parse.py -f netperf_result.log
 
 #Link: https://lore.kernel.org/lkml/20210726102247.21437-2-mgorman@techsingularity.net
 
@@ -70,10 +71,13 @@ if __name__ == "__main__":
     for line in fd.readlines():
         items = line.strip().split()
         if items == []:
+            # search for next benchmark section
+            begin = 0
+            print()
             continue
         if items[0] == "case":
             begin = 1
-            print("%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s" % (items[0], items[1], items[2], "se_eff%", "dom_eff%", "fast_rate%", "success_rate%"))
+            print("%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s\t%12s" % (items[0], items[1], items[2], "se_eff%", "dom_eff%", "fast_rate%", "success_rate%", "util_avg%"))
             continue
         if begin != 1:
             continue
@@ -81,6 +85,8 @@ if __name__ == "__main__":
         sis_domain_search = int(items[6])
         sis_scanned = int(items[7])
         sis_failed = int(items[8])
+
+        util_avg = int(items[9]) / 114688
 
         idle_found = sis_search - sis_failed
         sis_search_eff = idle_found / sis_scanned
@@ -93,4 +99,4 @@ if __name__ == "__main__":
         sis_fast_success_rate = idle_fast_found / sis_search
         sis_success_rate = idle_found / sis_search
 
-        print("%12s\t%12s\t%12s\t%12.3f\t%12.3f\t%12.3f\t%12.3f" % (items[0], items[1], items[2], 100*sis_search_eff, 100*sis_domain_search_eff, 100*sis_fast_success_rate, 100*sis_success_rate))
+        print("%12s\t%12s\t%12s\t%12.3f\t%12.3f\t%12.3f\t%12.3f\t%12.3f" % (items[0], items[1], items[2], 100*sis_search_eff, 100*sis_domain_search_eff, 100*sis_fast_success_rate, 100*sis_success_rate, 100*util_avg))
