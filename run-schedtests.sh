@@ -16,14 +16,14 @@ echo 1 > /proc/sys/kernel/sched_schedstats
 echo 1 > /sys/kernel/debug/tracing/events/sched/sched_update_sd_lb_stats/enable
 pepc.standalone cpu-hotplug offline --packages 1
 
-run_hackbench()
+start_hackbench()
 {
 	hackbench_job_list="1 2 4 8"
 	hackbench_iterations=$iterations
 	. $test_path/benchmarks/hackbench.sh
 }
 
-run_netperf()
+start_netperf()
 {
 	netperf_job_list=$joblist
 	netperf_run_time=$runtime
@@ -31,7 +31,7 @@ run_netperf()
 	. $test_path/benchmarks/netperf.sh
 }
 
-run_tbench()
+start_tbench()
 {
 	tbench_job_list=$joblist
 	tbench_run_time=$runtime
@@ -39,7 +39,7 @@ run_tbench()
 	. $test_path/benchmarks/tbench.sh
 }
 
-run_schbench()
+start_schbench()
 {
 	schbench_job_list="1 2 4 8"
 	schbench_run_time=$runtime
@@ -48,10 +48,10 @@ run_schbench()
 }
 
 [ $# = 0 ] && {
-        run_hackbench
-        run_netperf
-        run_tbench
-        run_schbench
+        start_hackbench
+        start_netperf
+        start_tbench
+        start_schbench
         exit
 }
 
@@ -62,8 +62,8 @@ if [ -n "$2" ]; then
 fi
 
 case "$benchmark" in
-	'hackbench'	) run_hackbench	;;
-	'netperf'	) run_netperf	;;
-	'tbench'	) run_tbench	;;
-	'schbench'	) run_schbench	;;
+	'hackbench'	) start_hackbench	;;
+	'netperf'	) start_netperf	;;
+	'tbench'	) start_tbench	;;
+	'schbench'	) start_schbench	;;
 esac
