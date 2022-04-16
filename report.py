@@ -20,7 +20,7 @@ class benchmark:
     def __init__(self, bmk):
 
         # the relative log path is ./logs
-        self.log_path = os.path.join(benchmark.curr_path, "logs/" + bmk['name'])
+        self.log_path = os.path.join(benchmark.curr_path, logpath + "/" + bmk['name'])
 
         # metrics extracted as the first column in the log file by bash script
         self.metrics_pos = 0
@@ -262,17 +262,18 @@ class benchmark:
             self._compare_report(baseline, compare)
 
 def usage():
-    print("./report.py [-t testname] -b baseline [-c compare] -s schedstat")
+    print("./report.py [-t testname] -b baseline [-c compare] -s schedstat -f log_dir")
     print("\t-t (--testname) test case name")
     print("\t-b (--baseline) baseline run name")
     print("\t-c (--compare) compare run name")
     print("\t-s (--schedstat) schedstat field")
+    print("\t-f (--file) log file")
 
 if __name__ == "__main__":
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:-s:',
-                        ['help','testname=','baseline=','compare=','schedstat='])
+        opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:-s:-f:',
+                        ['help','testname=','baseline=','compare=','schedstat=','file='])
     except getopt.GetoptError:
         usage()
         # 128 - invalid argument to exit
@@ -282,6 +283,7 @@ if __name__ == "__main__":
     baseline = ""
     compare = ""
     schedstat_field = ""
+    logpath = "logs"
 
     for opt_name, opt_value in opts:
         if opt_name in ('-h', '--help'):
@@ -295,6 +297,8 @@ if __name__ == "__main__":
             compare = opt_value
         if opt_name in ('-s', '--schedstat'):
             schedstat_field = opt_value.split(',')
+        if opt_name in ('-f', '--file'):
+            logpath = opt_value
 
     # baseline is a must
     if not baseline:
