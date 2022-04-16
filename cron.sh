@@ -3,8 +3,8 @@ rela_path=`dirname $0`
 test_path=`cd "$rela_path" && pwd`
 run_name=`uname -r`
 task_list="hackbench netperf tbench schbench"
-email_address="aubrey.li@intel.com"
-reboot_cmd="systemctl start kexec.target"
+email_address="yu.c.chen@intel.com"
+reboot_cmd="systemctl reboot"
 
 task_notify()
 {
