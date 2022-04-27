@@ -47,7 +47,7 @@ run_schbench_post()
 			if grep -q $schbench_old_pattern $log_file; then
 				schbench_pattern=$schbench_old_pattern
 			fi
-			cat $log_file | grep $schbench_pattern | awk '{print $2}' > \
+			cat $log_file | grep $schbench_pattern | tail -1 | awk '{print $2}' > \
 				$schbench_log_path/$wm/mthread-$job/$run_name.log
 		done
 	done
