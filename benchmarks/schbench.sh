@@ -57,7 +57,7 @@ run_schbench_single()
 {
 	local job=$1
 
-	schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s -c
+	schbench -m $job -t $schbench_worker_threads -r $schbench_run_time
 }
 
 run_schbench_iterations()
