@@ -9,6 +9,8 @@ echo 1 > /proc/sys/kernel/sched_schedstats
 echo 1 > /sys/kernel/debug/tracing/events/sched/sched_update_sd_lb_stats/enable
 pepc.standalone cpu-hotplug offline --packages 1
 
+sleep 10
+
 run_name=`uname -r`
 # 25% 50% 75% 100% 125% 150% 175% 200%
 min_job=$(($(nproc) / 4))
