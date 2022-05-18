@@ -35,6 +35,10 @@ class benchmark:
         # /proc/schedstat, at most 20 fields
         self.schedstat_array = np.zeros((20,1))
 
+        # nr_sis at most for  116 CPUs, format: cpu nr_sis_prop nr_sis_util
+        w, h = 2, 116
+        self.nr_sis_array_2d = [[0 for x in range(w)] for y in range(h)]
+
     def _schedstat_parse(self, logfile):
 
         fd = open(logfile, 'r')
@@ -104,6 +108,22 @@ class benchmark:
 
         return avg, std
 
+    def _nr_parse(self, logfile):
+
+        w, h = 2, 116
+        array_2d = [[0 for x in range(w)] for y in range(h)]
+
+        fd = open(logfile, 'r')
+
+        for line in fd.readlines():
+            items = line.strip().split()
+            array_2d[int(items[2])][0] = int(items[3])
+            array_2d[int(items[2])][1] = int(items[4])
+
+        fd.close()
+
+        return array_2d
+
     def _log_process(self, baseline, compare):
         # The log topology is 4-level structure
         # ./logs
@@ -135,7 +155,8 @@ class benchmark:
 
                     if "schedstat" not in log_file:
                           if "ftrace" not in log_file:
-                             avg, std = self._log_parse(log_file)
+                             if "sis_nr" not in log_file:
+                                 avg, std = self._log_parse(log_file)
 
                     if baseline in log:
                           if "schedstat_before" in log_file:
@@ -146,6 +167,12 @@ class benchmark:
                              continue
                           if "ftrace" in log_file:
                              util_avg = self._util_avg_parse(log_file)
+                             continue
+                          if "sis_nr_before" in log_file:
+                             nr_before = self._nr_parse(log_file)
+                             continue
+                          if "sis_nr_after" in log_file:
+                             nr_after = self._nr_parse(log_file)
                              continue
 
                           b_avg = avg
@@ -165,6 +192,12 @@ class benchmark:
                 i = 0
                 while i < 20:
                     self.schedstat_array[i] = stat_a[i] - stat_b[i]
+                    i += 1
+
+                i = 0
+                while i < 116:
+                    self.nr_sis_array_2d[i][0] = nr_after[i][0] - nr_before[i][0]
+                    self.nr_sis_array_2d[i][1] = nr_after[i][1] - nr_before[i][1]
                     i += 1
 
                 #sanity check
@@ -203,6 +236,14 @@ class benchmark:
         self.table = self.table.drop('sort', axis = 1).reset_index(drop = True)
 
     def _baseline_report(self, baseline):
+
+        if print_sis_nr == 1:
+                i = 0
+                while i < 116:
+                    print("%d %ld %ld" % (i, self.nr_sis_array_2d[i][0], self.nr_sis_array_2d[i][1]))
+                    i += 1
+                return
+
         # print table header
         print('{0:16s}\t{1:8s}\t{2:>12s}\t{3:>8s}\t\t' \
             .format('case','load',self.metrics_str,'std%'), end='')
@@ -250,9 +291,10 @@ class benchmark:
                     change_pct, self.table['c_std'][i]))
 
     def report(self, bmk, baseline, compare):
-	#output benchmark name
-        print("\n{}".format(bmk['name']))
-        print("{}".format("=" * len(bmk['name'])))
+        if print_sis_nr != 1:
+            #output benchmark name
+            print("\n{}".format(bmk['name']))
+            print("{}".format("=" * len(bmk['name'])))
 
         self._log_process(baseline, compare)
 
@@ -268,11 +310,12 @@ def usage():
     print("\t-c (--compare) compare run name")
     print("\t-s (--schedstat) schedstat field")
     print("\t-f (--file) log file")
+    print("\t-n (--nrutil)")
 
 if __name__ == "__main__":
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:-s:-f:',
+        opts, args = getopt.getopt(sys.argv[1:], '-h-t:-b:-c:-s:-f:-n',
                         ['help','testname=','baseline=','compare=','schedstat=','file='])
     except getopt.GetoptError:
         usage()
@@ -284,6 +327,7 @@ if __name__ == "__main__":
     compare = ""
     schedstat_field = ""
     logpath = "logs"
+    print_sis_nr = 0
 
     for opt_name, opt_value in opts:
         if opt_name in ('-h', '--help'):
@@ -299,6 +343,8 @@ if __name__ == "__main__":
             schedstat_field = opt_value.split(',')
         if opt_name in ('-f', '--file'):
             logpath = opt_value
+        if opt_name in ('-n', '--nrutil'):
+            print_sis_nr = 1
 
     # baseline is a must
     if not baseline:
