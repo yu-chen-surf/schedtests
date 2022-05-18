@@ -10,7 +10,7 @@
 #####################
 hackbench_work_type="process threads"
 hackbench_ipc_mode="pipe sockets"
-hackbench_work_loops=1000000
+hackbench_work_loops=5000000
 hackbench_data_size=100
 hackbench_num_fds=$(($(nproc) / 8))
 hackbench_pattern_cmd="grep Time"
