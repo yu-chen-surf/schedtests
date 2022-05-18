@@ -59,10 +59,10 @@ run_netperf_iterations()
 	local job=$1
 	local wm=$2
 
-	. $test_path/monitor.sh
+	#. $test_path/monitor.sh
 	for i in $(seq 1 $netperf_iterations); do
 		echo "Thread:" $job " - Mode:" $wm " - Iterations:" $i
-		run_ftrace 10 $netperf_log_path/$wm/thread-$job/$run_name-ftrace.log &
+	#	run_ftrace 10 $netperf_log_path/$wm/thread-$job/$run_name-ftrace.log &
 		cat /proc/schedstat | grep cpu >> $netperf_log_path/$wm/thread-$job/$run_name-schedstat_before.log
 		run_netperf_single $job $wm >> $netperf_log_path/$wm/thread-$job/$run_name/netperf.log
 		cat /proc/schedstat | grep cpu >> $netperf_log_path/$wm/thread-$job/$run_name-schedstat_after.log

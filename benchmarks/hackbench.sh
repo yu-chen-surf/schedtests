@@ -77,10 +77,10 @@ run_hackbench_iterations()
 	local wt=$2
 	local im=$3	
 
-	. $test_path/monitor.sh
+	#. $test_path/monitor.sh
 	for i in $(seq 1 $hackbench_iterations); do
 		echo "Group:" $job " - Type:" $wt " - Mode:" $im " - Iterations:" $i
-		run_ftrace 4 $hackbench_log_path/$wt-$im/group-$job/$run_name-ftrace.log &
+	#	run_ftrace 4 $hackbench_log_path/$wt-$im/group-$job/$run_name-ftrace.log &
 		cat /proc/schedstat | grep cpu >> $hackbench_log_path/$wt-$im/group-$job/$run_name-schedstat_before.log
 		run_hackbench_single $job $wt $im >> $hackbench_log_path/$wt-$im/group-$job/$run_name/hackbench.log
 		cat /proc/schedstat | grep cpu >> $hackbench_log_path/$wt-$im/group-$job/$run_name-schedstat_after.log
