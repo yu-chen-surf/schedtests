@@ -117,8 +117,8 @@ class benchmark:
 
         for line in fd.readlines():
             items = line.strip().split()
-            array_2d[int(items[2])][0] = int(items[3])
-            array_2d[int(items[2])][1] = int(items[4])
+            array_2d[int(items[0])][0] = int(items[1])
+            array_2d[int(items[0])][1] = int(items[2])
 
         fd.close()
 
