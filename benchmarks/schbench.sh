@@ -13,7 +13,7 @@ schbench_work_mode="normal"
 schbench_worker_threads=$(($(nproc) / 4))
 schbench_old_pattern="99.0000th"
 schbench_pattern="99.0th"
-schbench_sleep_time=10
+schbench_sleep_time=30
 schbench_log_path=$test_path/logs/schbench
 
 run_schbench_pre()

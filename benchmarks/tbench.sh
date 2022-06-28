@@ -12,7 +12,7 @@
 tbench_host_ip=127.0.0.1
 tbench_work_mode="loopback"
 tbench_pattern_cmd="grep Throughput"
-tbench_sleep_time=10
+tbench_sleep_time=30
 tbench_log_path=$test_path/logs/tbench
 
 run_tbench_pre()
