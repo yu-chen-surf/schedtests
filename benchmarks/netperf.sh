@@ -63,10 +63,10 @@ run_netperf_iterations()
 	for i in $(seq 1 $netperf_iterations); do
 		echo "Thread:" $job " - Mode:" $wm " - Iterations:" $i
 	#	run_ftrace 10 $netperf_log_path/$wm/thread-$job/$run_name-ftrace.log &
-		cat /proc/schedstat | grep cpu >> $netperf_log_path/$wm/thread-$job/$run_name-schedstat_before.log
+		#cat /proc/schedstat | grep cpu >> $netperf_log_path/$wm/thread-$job/$run_name-schedstat_before.log
 		run_netperf_single $job $wm >> $netperf_log_path/$wm/thread-$job/$run_name/netperf.log
-		cat /proc/schedstat | grep cpu >> $netperf_log_path/$wm/thread-$job/$run_name-schedstat_after.log
-		sleep 1
+		#cat /proc/schedstat | grep cpu >> $netperf_log_path/$wm/thread-$job/$run_name-schedstat_after.log
+		sleep 10
 	done
 }
 
