@@ -71,6 +71,9 @@ run_schbench_iterations()
 	#	run_ftrace 10 $schbench_log_path/$wm/mthread-$job/$run_name-ftrace.log &
 		#cat /proc/schedstat | grep cpu >> $schbench_log_path/$wm/mthread-$job/$run_name-schedstat_before.log
 		run_schbench_single $job &>> $schbench_log_path/$wm/mthread-$job/$run_name/schbench.log
+		echo "mThread:"$job" - Mode:"$wm" - Iterations:"$i >> schbench_process.log
+		sudo scp tbench_process.log chenyu-dev:~/
+		
 		#cat /proc/schedstat | grep cpu >> $schbench_log_path/$wm/mthread-$job/$run_name-schedstat_after.log
 		sleep 10
 	done

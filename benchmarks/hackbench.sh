@@ -86,6 +86,8 @@ run_hackbench_iterations()
 		#cat /proc/version
 		#dmesg -c | awk '(NR>1)' | awk -F ']' '{ print $2 }' >> $hackbench_log_path/$wt-$im/group-$job/$run_name-sis_nr_before.log
 		run_hackbench_single $job $wt $im >> $hackbench_log_path/$wt-$im/group-$job/$run_name/hackbench.log
+		echo "Group:"$job" - Type:"$wt" - Mode:"$im" - Iterations:"$i >> hackbench_process.log
+		sudo scp hackbench_process.log chenyu-dev:~/
 		#cat /proc/schedstat | grep cpu >> $hackbench_log_path/$wt-$im/group-$job/$run_name-schedstat_after.log
 		#cat /proc/version
 		#dmesg -c | awk '(NR>1)' | awk -F ']' '{ print $2 }' >> $hackbench_log_path/$wt-$im/group-$job/$run_name-sis_nr_after.log

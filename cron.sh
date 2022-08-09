@@ -38,9 +38,9 @@ touch state_machine
 
 for task in $task_list; do
 	if [ `grep -c $task state_machine` -eq '0' ]; then
-		task_notify $task "started"
+		#task_notify $task "started"
 		./run-schedtests.sh $task >> cron.log 2>&1
-		task_notify $task "completed"
+		#task_notify $task "completed"
 		echo "$task" >> state_machine
 		# wait for the notification sent out
 		sleep 10
@@ -49,4 +49,4 @@ for task in $task_list; do
 	fi
 done
 
-task_notify "Testing" "completed"
+#task_notify "Testing" "completed"
