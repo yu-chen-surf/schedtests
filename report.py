@@ -158,7 +158,7 @@ class benchmark:
                              if "sis_nr" not in log_file:
                                  avg, std = self._log_parse(log_file)
 
-                    if baseline in log:
+                    if (baseline+".log").__eq__(log):
                           if "schedstat_before" in log_file:
                              stat_b = self._schedstat_parse(log_file)
                              continue
