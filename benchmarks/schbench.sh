@@ -13,6 +13,7 @@ schbench_work_mode="normal"
 schbench_worker_threads=$(($(nproc) / 4))
 schbench_old_pattern="99.0000th"
 schbench_pattern="99.0th"
+schbench_pattern2="Latency percentiles (usec) runtime $schbench_run_time (s)"
 schbench_sleep_time=30
 schbench_log_path=$test_path/logs/schbench
 
@@ -47,7 +48,8 @@ run_schbench_post()
 			if grep -q $schbench_old_pattern $log_file; then
 				schbench_pattern=$schbench_old_pattern
 			fi
-			cat $log_file | grep $schbench_pattern | tail -1 | awk '{print $2}' > \
+			cat $log_file | grep -e "$schbench_pattern2" -e "$schbench_pattern" | grep -A 1 "$schbench_pattern2" | grep \
+				"$schbench_pattern" | awk '{print $2}' > \
 				$schbench_log_path/$wm/mthread-$job/$run_name.log
 		done
 	done
