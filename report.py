@@ -191,13 +191,13 @@ class benchmark:
 
                 i = 0
                 while i < 20:
-                    self.schedstat_array[i] = stat_a[i] - stat_b[i]
+                    self.schedstat_array[i] = 0#stat_a[i] - stat_b[i]
                     i += 1
 
                 i = 0
                 while i < 116:
-                    self.nr_sis_array_2d[i][0] = nr_after[i][0] - nr_before[i][0]
-                    self.nr_sis_array_2d[i][1] = nr_after[i][1] - nr_before[i][1]
+                    self.nr_sis_array_2d[i][0] = 0#nr_after[i][0] - nr_before[i][0]
+                    self.nr_sis_array_2d[i][1] = 0#nr_after[i][1] - nr_before[i][1]
                     i += 1
 
                 #sanity check
