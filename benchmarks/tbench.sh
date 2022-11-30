@@ -28,7 +28,7 @@ run_tbench_pre()
 	sleep 1
 	for job in $tbench_job_list; do
 		for wm in $tbench_work_mode; do
-			mkdir -p $tbench_log_path/$wm/thread-$job/$run_name
+			mkdir -p $tbench_log_path/$wm/$job-threads/$run_name
 		done
 	done
 }
@@ -37,9 +37,9 @@ run_tbench_post()
 {
 	for job in $tbench_job_list; do
 		for wm in $tbench_work_mode; do
-			log_file=$tbench_log_path/$wm/thread-$job/$run_name/tbench.log
+			log_file=$tbench_log_path/$wm/$job-threads/$run_name/tbench.log
 			cat $log_file | $tbench_pattern_cmd | awk '{print $2}' > \
-				$tbench_log_path/$wm/thread-$job/$run_name.log
+				$tbench_log_path/$wm/$job-threads/$run_name.log
 		done
 	done
 }
@@ -61,7 +61,7 @@ run_tbench_iterations()
 		echo -e "\nThread:" $job " - Mode:" $wm " - Iterations:" $i
 	#	run_ftrace 10 $tbench_log_path/$wm/thread-$job/$run_name-ftrace.log &
 		#cat /proc/schedstat | grep cpu >> $tbench_log_path/$wm/thread-$job/$run_name-schedstat_before.log
-		run_tbench_single $job >> $tbench_log_path/$wm/thread-$job/$run_name/tbench.log
+		run_tbench_single $job >> $tbench_log_path/$wm/$job-threads/$run_name/tbench.log
 		echo -e "\nThread:"$job" - Mode:"$wm" - Iterations:"$i >> tbench_process.log
 		sudo scp tbench_process.log chenyu-dev:~/
 		#cat /proc/schedstat | grep cpu >> $tbench_log_path/$wm/thread-$job/$run_name-schedstat_after.log

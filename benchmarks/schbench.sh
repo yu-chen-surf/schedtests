@@ -35,7 +35,7 @@ run_schbench_pre()
 	fi
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
-			mkdir -p $schbench_log_path/$wm/mthread-$job/$run_name
+			mkdir -p $schbench_log_path/$wm/$job-mthreads/$run_name
 		done
 	done
 }
@@ -44,13 +44,13 @@ run_schbench_post()
 {
 	for job in $schbench_job_list; do
 		for wm in $schbench_work_mode; do
-			log_file=$schbench_log_path/$wm/mthread-$job/$run_name/schbench.log
+			log_file=$schbench_log_path/$wm/$job-mthreads/$run_name/schbench.log
 			if grep -q $schbench_old_pattern $log_file; then
 				schbench_pattern=$schbench_old_pattern
 			fi
 			cat $log_file | grep -e "$schbench_pattern2" -e "$schbench_pattern" | grep -A 1 "$schbench_pattern2" | grep \
 				"$schbench_pattern" | awk '{print $2}' > \
-				$schbench_log_path/$wm/mthread-$job/$run_name.log
+				$schbench_log_path/$wm/$job-mthreads/$run_name.log
 		done
 	done
 }
@@ -72,7 +72,7 @@ run_schbench_iterations()
 		echo "mThread:" $job " - Mode:" $wm " - Iterations:" $i
 	#	run_ftrace 10 $schbench_log_path/$wm/mthread-$job/$run_name-ftrace.log &
 		#cat /proc/schedstat | grep cpu >> $schbench_log_path/$wm/mthread-$job/$run_name-schedstat_before.log
-		run_schbench_single $job &>> $schbench_log_path/$wm/mthread-$job/$run_name/schbench.log
+		run_schbench_single $job &>> $schbench_log_path/$wm/$job-mthreads/$run_name/schbench.log
 		echo "mThread:"$job" - Mode:"$wm" - Iterations:"$i >> schbench_process.log
 		sudo scp tbench_process.log chenyu-dev:~/
 		

@@ -38,7 +38,7 @@ run_hackbench_pre()
 	for job in $hackbench_job_list; do
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
-				mkdir -p $hackbench_log_path/$wt-$im/group-$job/$run_name
+				mkdir -p $hackbench_log_path/$wt-$im/$job-groups/$run_name
 			done
 		done
 	done
@@ -49,9 +49,9 @@ run_hackbench_post()
 	for job in $hackbench_job_list; do
 		for wt in $hackbench_work_type; do
 			for im in $hackbench_ipc_mode; do
-				log_file=$hackbench_log_path/$wt-$im/group-$job/$run_name/hackbench.log
+				log_file=$hackbench_log_path/$wt-$im/$job-groups/$run_name/hackbench.log
 				cat $log_file | $hackbench_pattern_cmd | awk '{print $2}' > \
-					$hackbench_log_path/$wt-$im/group-$job/$run_name.log
+					$hackbench_log_path/$wt-$im/$job-groups/$run_name.log
 			done
 		done
 	done
@@ -85,7 +85,7 @@ run_hackbench_iterations()
 		#cat /proc/schedstat | grep cpu >> $hackbench_log_path/$wt-$im/group-$job/$run_name-schedstat_before.log
 		#cat /proc/version
 		#dmesg -c | awk '(NR>1)' | awk -F ']' '{ print $2 }' >> $hackbench_log_path/$wt-$im/group-$job/$run_name-sis_nr_before.log
-		run_hackbench_single $job $wt $im >> $hackbench_log_path/$wt-$im/group-$job/$run_name/hackbench.log
+		run_hackbench_single $job $wt $im >> $hackbench_log_path/$wt-$im/$job-groups/$run_name/hackbench.log
 		echo "Group:"$job" - Type:"$wt" - Mode:"$im" - Iterations:"$i >> hackbench_process.log
 		sudo scp hackbench_process.log chenyu-dev:~/
 		#cat /proc/schedstat | grep cpu >> $hackbench_log_path/$wt-$im/group-$job/$run_name-schedstat_after.log
