@@ -5,8 +5,8 @@ test_path=`cd "$rela_path" && pwd`
 pepc.standalone pstates config --governor performance
 pepc.standalone pstates config --turbo off
 pepc.standalone cstates config --disable C6
-echo 1 > /proc/sys/kernel/sched_schedstats
-echo 1 > /sys/kernel/debug/tracing/events/sched/sched_update_sd_lb_stats/enable
+#echo 1 > /proc/sys/kernel/sched_schedstats
+#echo 1 > /sys/kernel/debug/tracing/events/sched/sched_update_sd_lb_stats/enable
 pepc.standalone cpu-hotplug offline --packages 1
 
 sleep 10
