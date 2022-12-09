@@ -2,7 +2,8 @@
 #####################
 #schbench config
 #####################
-: "${schbench_job_list:="1 2 4 8"}"
+#: "${schbench_job_list:="1 2 4 8"}"
+: "${schbench_job_list:="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28"}"
 : "${schbench_iterations:=10}"
 : "${schbench_run_time:=100}"
 
@@ -10,7 +11,8 @@
 #schbench parameters
 #####################
 schbench_work_mode="normal"
-schbench_worker_threads=$(($(nproc) / 4))
+#schbench_worker_threads=$(($(nproc) / 4))
+schbench_worker_threads=$(($(nproc) / 14))
 schbench_old_pattern="99.0000th"
 schbench_pattern="99.0th"
 schbench_pattern2="Latency percentiles (usec) runtime $schbench_run_time (s)"

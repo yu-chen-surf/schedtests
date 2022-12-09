@@ -2,7 +2,8 @@
 #####################
 #hackbench config
 #####################
-: "${hackbench_job_list:="1 2 4 8"}"
+#: "${hackbench_job_list:="1 2 4 8"}"
+: "${hackbench_job_list:="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28"}"
 : "${hackbench_iterations:=10}"
 
 #####################
@@ -12,7 +13,8 @@ hackbench_work_type="process threads"
 hackbench_ipc_mode="pipe sockets"
 hackbench_work_loops=5000000
 hackbench_data_size=100
-hackbench_num_fds=$(($(nproc) / 8))
+#hackbench_num_fds=$(($(nproc) / 8))
+hackbench_num_fds=$(($(nproc) / 14))
 hackbench_pattern_cmd="grep Time"
 hackbench_sleep_time=30
 hackbench_log_path=$test_path/logs/hackbench

@@ -15,12 +15,13 @@ run_name=`uname -r`
 # 25% 50% 75% 100% 125% 150% 175% 200%
 min_job=$(($(nproc) / 4))
 joblist="$min_job $(($min_job * 2)) $(($min_job * 3)) $(($min_job * 4)) $(($min_job * 5)) $(($min_job * 6)) $(($min_job * 7)) $(($min_job * 8))"
-runtime=60
+runtime=100
 iterations=3
 
 start_hackbench()
 {
-	hackbench_job_list="1 2 4 8"
+	#hackbench_job_list="1 2 4 8"
+	hackbench_job_list="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28"
 	hackbench_iterations=$iterations
 	. $test_path/benchmarks/hackbench.sh
 }
@@ -43,7 +44,8 @@ start_tbench()
 
 start_schbench()
 {
-	schbench_job_list="1 2 4 8"
+	#schbench_job_list="1 2 4 8"
+	schbench_job_list="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28"
 	schbench_run_time=$runtime
 	schbench_iterations=$iterations
 	. $test_path/benchmarks/schbench.sh
