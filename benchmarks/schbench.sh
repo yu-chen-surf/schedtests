@@ -60,8 +60,13 @@ run_schbench_post()
 run_schbench_single()
 {
 	local job=$1
+	local wm=$2
+	local iter=$3
 
-	schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
+	perf record -q -ag --realtime=1 -m 256 --count=1000003 -e cycles:pp -o perf-schbench-$job-$wm-$iter.data -D 10000 -- schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
+	#schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
+	perf report  --children --header -U -g folded,0.5,callee --sort=dso,symbol -i perf-schbench-$job-$wm-$iter.data > perf-profile-schbench-$job-$wm-$iter.log
+	rm -rf perf-schbench-$job-$wm-$iter.data
 }
 
 run_schbench_iterations()
@@ -74,7 +79,7 @@ run_schbench_iterations()
 		echo "mThread:" $job " - Mode:" $wm " - Iterations:" $i
 	#	run_ftrace 10 $schbench_log_path/$wm/mthread-$job/$run_name-ftrace.log &
 		#cat /proc/schedstat | grep cpu >> $schbench_log_path/$wm/mthread-$job/$run_name-schedstat_before.log
-		run_schbench_single $job &>> $schbench_log_path/$wm/$job-mthreads/$run_name/schbench.log
+		run_schbench_single $job $i $wm &>> $schbench_log_path/$wm/$job-mthreads/$run_name/schbench.log
 		echo "mThread:"$job" - Mode:"$wm" - Iterations:"$i >> schbench_process.log
 		#sudo scp tbench_process.log chenyu-dev:~/
 		
