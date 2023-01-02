@@ -51,6 +51,10 @@ start_schbench()
 	. $test_path/benchmarks/schbench.sh
 }
 
+if [ -n "$2" ]; then
+	run_name=$2
+fi
+
 [ $# = 0 ] && {
         start_hackbench
         start_netperf
@@ -61,9 +65,10 @@ start_schbench()
 
 benchmark=$1
 
-if [ -n "$2" ]; then
-	joblist=$2
+if [ -n "$3" ]; then
+	joblist=$3
 fi
+
 
 case "$benchmark" in
 	'hackbench'	) start_hackbench	;;
