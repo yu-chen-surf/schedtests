@@ -66,14 +66,16 @@ run_hackbench_single()
 	local im=$3
 	local iter=$4
 	if [ $im == "pipe" ]; then
-		perf record -q -ag --realtime=1 -m 256 --count=1000003 -e cycles:pp -o perf-hackbench-$job-$wt-$im-$iter.data -D 10000 -- hackbench -g $job --$wt --$im -l $hackbench_work_loops -s $hackbench_data_size -f $hackbench_num_fds
+		#perf record -q -ag --realtime=1 -m 256 --count=1000003 -e cycles:pp -o perf-hackbench-$job-$wt-$im-$iter.data -D 10000 -- hackbench -g $job --$wt --$im -l $hackbench_work_loops -s $hackbench_data_size -f $hackbench_num_fds
+		hackbench -g $job --$wt --$im -l $hackbench_work_loops -s $hackbench_data_size -f $hackbench_num_fds
 	elif [ $im == "sockets" ]; then
-		perf record -q -ag --realtime=1 -m 256 --count=1000003 -e cycles:pp -o perf-hackbench-$job-$wt-$im-$iter.data -D 10000 -- hackbench -g $job --$wt -l $hackbench_work_loops -s $hackbench_data_size -f $hackbench_num_fds
+		#perf record -q -ag --realtime=1 -m 256 --count=1000003 -e cycles:pp -o perf-hackbench-$job-$wt-$im-$iter.data -D 10000 -- hackbench -g $job --$wt -l $hackbench_work_loops -s $hackbench_data_size -f $hackbench_num_fds
+		hackbench -g $job --$wt -l $hackbench_work_loops -s $hackbench_data_size -f $hackbench_num_fds
 	else
 		echo "hackbench: wrong IPC mode!"
 	fi
-	perf report  --children --header -U -g folded,0.5,callee --sort=dso,symbol -i perf-hackbench-$job-$wt-$im-$iter.data > perf-profile-hackbench-$job-$wt-$im-$iter.log
-	rm -rf perf-hackbench-$job-$wt-$im-$iter.data
+	#perf report  --children --header -U -g folded,0.5,callee --sort=dso,symbol -i perf-hackbench-$job-$wt-$im-$iter.data > perf-profile-hackbench-$job-$wt-$im-$iter.log
+	#rm -rf perf-hackbench-$job-$wt-$im-$iter.data
 }
 
 run_hackbench_iterations()

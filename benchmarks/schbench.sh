@@ -63,10 +63,10 @@ run_schbench_single()
 	local wm=$2
 	local iter=$3
 
-	perf record -q -ag --realtime=1 -m 256 --count=1000003 -e cycles:pp -o perf-schbench-$job-$wm-$iter.data -D 10000 -- schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
-	#schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
-	perf report  --children --header -U -g folded,0.5,callee --sort=dso,symbol -i perf-schbench-$job-$wm-$iter.data > perf-profile-schbench-$job-$wm-$iter.log
-	rm -rf perf-schbench-$job-$wm-$iter.data
+	#perf record -q -ag --realtime=1 -m 256 --count=1000003 -e cycles:pp -o perf-schbench-$job-$wm-$iter.data -D 10000 -- schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
+	schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
+	#perf report  --children --header -U -g folded,0.5,callee --sort=dso,symbol -i perf-schbench-$job-$wm-$iter.data > perf-profile-schbench-$job-$wm-$iter.log
+	#rm -rf perf-schbench-$job-$wm-$iter.data
 }
 
 run_schbench_iterations()
