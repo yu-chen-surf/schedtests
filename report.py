@@ -178,7 +178,7 @@ class benchmark:
                           b_avg = avg
                           b_std = std
 
-                    if compare and compare in log:
+                    if (compare+".log").__eq__(log):
                           if "schedstat" in log_file:
                              #TBD
                              continue
