@@ -11,8 +11,8 @@
 #schbench parameters
 #####################
 schbench_work_mode="normal"
-#schbench_worker_threads=$(($(nproc) / 4))
-schbench_worker_threads=$(($(nproc) / 14))
+schbench_worker_threads=$(($(nproc) / 4))
+#schbench_worker_threads=$(($(nproc) / 14))
 schbench_old_pattern="99.0000th"
 schbench_pattern="99.0th"
 schbench_pattern2="Latency percentiles (usec) runtime $schbench_run_time (s)"
@@ -21,15 +21,13 @@ schbench_log_path=$test_path/logs/schbench
 
 run_schbench_pre()
 {
-	schbench -m 1 -t 1 -r 1 -s -c &> /dev/null
+	schbench -m 1 -t 1 -r 1 &> /dev/null
 	if [ $? -ne 0 ]; then
 		echo "[schedtests]: schbench not found or version not compatible"
 		echo "schbench usage:"
 		echo "        -m (--message-threads): number of message threads (def: 2)"
 		echo "        -t (--threads): worker threads per message thread (def: 16)"
 		echo "        -r (--runtime): How long to run before exiting (seconds, def: 30)"
-		echo "        -s (--sleeptime): Message thread latency (usec, def: 10000)"
-		echo "        -c (--cputime): How long to think during loop (usec, def: 10000)"
 		echo "        -a (--auto): grow thread count until latencies hurt (def: off)"
 		echo "        -p (--pipe): transfer size bytes to simulate a pipe test (def: 0)"
 		echo "        -R (--rps): requests per second mode (count, def: 0)"
@@ -64,7 +62,7 @@ run_schbench_single()
 	local iter=$3
 
 	#perf record -q -ag --realtime=1 -m 256 --count=1000003 -e cycles:pp -o perf-schbench-$job-$wm-$iter.data -D 10000 -- schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
-	schbench -m $job -t $schbench_worker_threads -r $schbench_run_time -s 30000 -c 30000
+	schbench -m $job -t $schbench_worker_threads -r $schbench_run_time
 	#perf report  --children --header -U -g folded,0.5,callee --sort=dso,symbol -i perf-schbench-$job-$wm-$iter.data > perf-profile-schbench-$job-$wm-$iter.log
 	#rm -rf perf-schbench-$job-$wm-$iter.data
 }
@@ -80,7 +78,7 @@ run_schbench_iterations()
 	#	run_ftrace 10 $schbench_log_path/$wm/mthread-$job/$run_name-ftrace.log &
 		#cat /proc/schedstat | grep cpu >> $schbench_log_path/$wm/mthread-$job/$run_name-schedstat_before.log
 		run_schbench_single $job $i $wm &>> $schbench_log_path/$wm/$job-mthreads/$run_name/schbench.log
-		echo "mThread:"$job" - Mode:"$wm" - Iterations:"$i >> schbench_process.log
+		#echo "mThread:"$job" - Mode:"$wm" - Iterations:"$i >> schbench_process.log
 		#sudo scp tbench_process.log chenyu-dev:~/
 		
 		#cat /proc/schedstat | grep cpu >> $schbench_log_path/$wm/mthread-$job/$run_name-schedstat_after.log
