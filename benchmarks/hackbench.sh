@@ -13,8 +13,8 @@ hackbench_work_type="process threads"
 hackbench_ipc_mode="pipe sockets"
 hackbench_work_loops=5000000
 hackbench_data_size=100
-#hackbench_num_fds=$(($(nproc) / 8))
-hackbench_num_fds=$(($(nproc) / 14))
+hackbench_num_fds=$(($(nproc) / 8))
+#hackbench_num_fds=$(($(nproc) / 14))
 hackbench_pattern_cmd="grep Time"
 hackbench_sleep_time=30
 hackbench_log_path=$test_path/logs/hackbench
@@ -93,7 +93,7 @@ run_hackbench_iterations()
 		#cat /proc/version
 		#dmesg -c | awk '(NR>1)' | awk -F ']' '{ print $2 }' >> $hackbench_log_path/$wt-$im/group-$job/$run_name-sis_nr_before.log
 		run_hackbench_single $job $wt $im $i >> $hackbench_log_path/$wt-$im/$job-groups/$run_name/hackbench.log
-		echo "Group:"$job" - Type:"$wt" - Mode:"$im" - Iterations:"$i >> hackbench_process.log
+		#echo "Group:"$job" - Type:"$wt" - Mode:"$im" - Iterations:"$i >> hackbench_process.log
 		#sudo scp hackbench_process.log chenyu-dev:~/
 		#cat /proc/schedstat | grep cpu >> $hackbench_log_path/$wt-$im/group-$job/$run_name-schedstat_after.log
 		#cat /proc/version
