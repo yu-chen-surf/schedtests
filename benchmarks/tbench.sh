@@ -62,7 +62,7 @@ run_tbench_iterations()
 	#	run_ftrace 10 $tbench_log_path/$wm/thread-$job/$run_name-ftrace.log &
 		#cat /proc/schedstat | grep cpu >> $tbench_log_path/$wm/thread-$job/$run_name-schedstat_before.log
 		run_tbench_single $job >> $tbench_log_path/$wm/$job-threads/$run_name/tbench.log
-		echo -e "\nThread:"$job" - Mode:"$wm" - Iterations:"$i >> tbench_process.log
+		#echo -e "\nThread:"$job" - Mode:"$wm" - Iterations:"$i >> tbench_process.log
 		#sudo scp tbench_process.log chenyu-dev:~/
 		#cat /proc/schedstat | grep cpu >> $tbench_log_path/$wm/thread-$job/$run_name-schedstat_after.log
 		sleep 10

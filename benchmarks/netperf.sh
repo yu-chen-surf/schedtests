@@ -65,7 +65,7 @@ run_netperf_iterations()
 	#	run_ftrace 10 $netperf_log_path/$wm/thread-$job/$run_name-ftrace.log &
 		#cat /proc/schedstat | grep cpu >> $netperf_log_path/$wm/thread-$job/$run_name-schedstat_before.log
 		run_netperf_single $job $wm >> $netperf_log_path/$wm/$job-threads/$run_name/netperf.log
-		echo "Thread:"$job" - Mode:"$wm" - Iterations:"$i >> netperf_process.log
+		#echo "Thread:"$job" - Mode:"$wm" - Iterations:"$i >> netperf_process.log
 		#sudo scp netperf_process.log chenyu-dev:~/
 		#cat /proc/schedstat | grep cpu >> $netperf_log_path/$wm/thread-$job/$run_name-schedstat_after.log
 		sleep 10
