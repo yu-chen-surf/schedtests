@@ -12,7 +12,7 @@
 netperf_work_mode="TCP_RR UDP_RR"
 netperf_host_ip=127.0.0.1
 netperf_sleep_time=30
-netperf_pattern_cmd="grep $netperf_run_time.00"
+netperf_pattern_cmd="grep $netperf_run_time\.00"
 netperf_log_path=$test_path/logs/netperf
 
 run_netperf_pre()
