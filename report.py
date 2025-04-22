@@ -216,7 +216,8 @@ class benchmark:
                         field = 1
                     base_dict['s'+field] = int(self.schedstat_array[int(field) - 1])
 
-                self.table = self.table.append(base_dict, ignore_index=True)
+		new_df = pd.DataFrame([base_dict])
+		self.table = pd.concat([self.table, new_df], ignore_index=True)
 
         # sort the table by case column first, then load column
         #
