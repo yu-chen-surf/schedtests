@@ -217,7 +217,7 @@ class benchmark:
                     base_dict['s'+field] = int(self.schedstat_array[int(field) - 1])
 
 		new_df = pd.DataFrame([base_dict])
-		self.table = pd.concat([self.table, new_df], ignore_index=True)
+		self.table = pd.concat([self.table, pd.DataFrame([base_dict])], ignore_index=True)
 
         # sort the table by case column first, then load column
         #
@@ -231,7 +231,7 @@ class benchmark:
         # UDP_RR          	thread-192	    15524.48	( 26.66)
         # UDP_RR          	thread-384	    23963.53	( 27.27)
         self.table['sort'] = self.table['load'].str.extract(
-                                '(\d+)', expand = False).astype(int)
+                                r'(\d+)', expand = False).astype(int)
         self.table.sort_values(by=['case', 'sort'],
                                 inplace = True, ascending= True)
         self.table = self.table.drop('sort', axis = 1).reset_index(drop = True)
